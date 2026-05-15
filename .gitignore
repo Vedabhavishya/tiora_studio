@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+ashwaah-web/node_modules/
+
+# Next.js build output
+.next/
+ashwaah-web/.next/
+
+# Database files
+*.db
+*.sqlite
+ashwaah-web/sqlite.db
+
+# Environment variables
+.env*
+ashwaah-web/.env*
+
+# IDE and OS files
+.vscode/
+.DS_Store
+Thumbs.db
