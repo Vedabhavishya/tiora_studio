@@ -6,7 +6,7 @@ const url = process.env.DATABASE_URL;
 const authToken = process.env.DATABASE_AUTH_TOKEN;
 
 // Initialize the client based on the environment
-const client = (url && url.startsWith("libsql")) 
+const client = (url && url !== "file:sqlite.db") 
   ? createClient({ url, authToken })
   : createClient({ url: "file:sqlite.db" }); // Local fallback
 
