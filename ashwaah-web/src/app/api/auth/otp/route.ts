@@ -165,7 +165,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ 
       success: false, 
       error: "A critical server error occurred. Please check server logs for details.",
-      devDetails: error?.message || String(error)
+      devDetails: error?.cause?.message || error?.message || String(error),
+      debugConnection: process.env.DATABASE_URL ? "USING_DATABASE_URL" : (process.env.DATABASE_URI ? "USING_DATABASE_URI" : "FALLBACK_SQLITE_DB"),
+      debugUrlPreview: process.env.DATABASE_URI?.substring(0, 15) || process.env.DATABASE_URL?.substring(0, 15)
     }, { status: 500 });
   }
 }
