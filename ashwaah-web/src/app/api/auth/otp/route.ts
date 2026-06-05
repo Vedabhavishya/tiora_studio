@@ -164,7 +164,8 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ 
       success: false, 
-      error: "A critical server error occurred. Please check server logs for details." 
+      error: "A critical server error occurred. Please check server logs for details.",
+      devDetails: error?.message || String(error)
     }, { status: 500 });
   }
 }

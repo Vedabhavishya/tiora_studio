@@ -29,9 +29,9 @@ export async function GET(request: Request) {
     
     const items = await query.orderBy(asc(navigationMenu.order));
     return NextResponse.json({ success: true, data: items });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Fetch Nav Error:", error);
-    return NextResponse.json({ success: false, error: "Failed to fetch navigation" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to fetch navigation", devDetails: error?.message || String(error) }, { status: 500 });
   }
 }
 
