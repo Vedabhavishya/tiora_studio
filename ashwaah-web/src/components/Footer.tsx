@@ -63,7 +63,7 @@ export default function Footer() {
             <img 
               src="/images/logo.png" 
               alt="Ashwaah Logo" 
-              className="h-10 w-auto object-contain brightness-0 invert" 
+              className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
             />
             <span className="font-playfair text-xl font-bold tracking-tighter text-white group-hover:text-[#C5A059] transition-colors">
               Ashwaah
@@ -112,8 +112,24 @@ export default function Footer() {
         <div className="md:col-span-2">
           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C5A059] mb-4">Keep In Touch</h4>
           <div className="flex space-x-4 text-[#F5EBE0]/60 mb-6">
-            <Link href="#" className="hover:text-white transition" aria-label="Facebook"><Facebook size={18} /></Link>
-            <Link href="#" className="hover:text-white transition" aria-label="Instagram"><Instagram size={18} /></Link>
+            <a 
+              href="https://www.facebook.com/share/1Ddd2P38UR/?mibextid=wwXIfr" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-white transition" 
+              aria-label="Facebook"
+            >
+              <Facebook size={18} />
+            </a>
+            <a 
+              href="https://www.instagram.com/ashwaah1988?igsh=MWpucWdvdWFmbzJnZA%3D%3D&utm_source=qr" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-white transition" 
+              aria-label="Instagram"
+            >
+              <Instagram size={18} />
+            </a>
           </div>
           <p className="text-[10px] text-[#F5EBE0]/50 font-bold uppercase tracking-[0.2em] mb-2">Email Support</p>
           <a href="mailto:support@ashwaah.com" className="text-xs font-semibold text-[#F5EBE0] hover:text-[#C5A059] transition">
@@ -122,8 +138,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-[10px] text-[#F5EBE0]/50 font-semibold tracking-wider uppercase">
+      <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex items-center justify-center">
+        <p className="text-[10px] text-[#F5EBE0]/50 font-semibold tracking-wider uppercase text-center">
           &copy; {new Date().getFullYear()} Ashwaah. All rights reserved.
         </p>
       </div>
