@@ -149,7 +149,7 @@ export default function Navbar() {
 
             <div className="hidden md:flex items-center space-x-4 ml-auto text-white">
               {/* Amazon Style Search Bar */}
-              <div className="max-w-[200px]">
+              <div className="w-64 md:w-80 lg:w-96 max-w-full">
                 <form onSubmit={handleSearchSubmit} className="w-full flex">
                   <div className="relative flex-1">
                     <input 
