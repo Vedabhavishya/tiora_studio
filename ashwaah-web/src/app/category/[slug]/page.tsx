@@ -96,17 +96,7 @@ export default async function CategoryPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
-      {/* Header */}
-      <div className="mb-10 text-center">
-        <h1 className="text-5xl md:text-6xl font-playfair font-bold text-brand mb-4 tracking-tight">{categoryName}</h1>
-        <div className="w-24 h-1 bg-[#C5A059] mx-auto rounded-full mb-4"></div>
-        <p className="text-brand/70 max-w-2xl mx-auto font-inter leading-relaxed">
-          Explore our curated selection of premium {categoryName.toLowerCase()} pieces, 
-          each designed with meticulous attention to detail and crafted for an impeccable fit.
-        </p>
-      </div>
-      
+    <div className="w-full bg-brand-light min-h-[calc(100vh-64px)] flex flex-col">
       {/* Rendering sections and fallback products via interactive CategoryFilterSection component */}
       <CategoryFilterSection
         initialSections={sectionsWithProducts}

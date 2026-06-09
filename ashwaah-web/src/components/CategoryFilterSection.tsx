@@ -257,7 +257,7 @@ export default function CategoryFilterSection({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-start relative z-30">
+    <div className="flex flex-col lg:flex-row w-full items-stretch relative z-30">
       
       {/* Mobile Show Filters Toggle Button */}
       <div className="lg:hidden w-full mb-2">
@@ -277,7 +277,7 @@ export default function CategoryFilterSection({
 
       {/* Left Column: Filter Sidebar Panel */}
       <aside
-        className={`w-full lg:w-64 flex-shrink-0 bg-[#FFFDF6] border border-brand/10 p-6 rounded-3xl shadow-sm self-start lg:sticky lg:top-20 lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto custom-scrollbar lg:block ${
+        className={`w-full lg:w-72 flex-shrink-0 bg-[#FFFDF6] border-r border-brand/10 p-6 lg:p-8 rounded-none lg:sticky lg:top-16 lg:h-[calc(100vh-64px)] lg:overflow-y-auto custom-scrollbar lg:block ${
           isMobileFiltersOpen ? "block" : "hidden"
         }`}
       >
@@ -381,7 +381,16 @@ export default function CategoryFilterSection({
       </aside>
 
       {/* Right Column: Products Content Area */}
-      <div className="flex-grow w-full">
+      <div className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-10 max-w-7xl mx-auto">
+        {/* Header Title & Description */}
+        <div className="mb-10 text-center lg:text-left">
+          <h1 className="text-4xl md:text-5xl font-playfair font-bold text-brand mb-3 tracking-tight">{categoryName}</h1>
+          <div className="w-20 h-1 bg-[#C5A059] lg:mx-0 mx-auto rounded-full mb-3"></div>
+          <p className="text-brand/70 max-w-2xl lg:mx-0 mx-auto font-inter leading-relaxed text-sm">
+            Explore our curated selection of premium {categoryName.toLowerCase()} pieces, 
+            each designed with meticulous attention to detail and crafted for an impeccable fit.
+          </p>
+        </div>
         <AnimatePresence mode="wait">
           {!isFilterOrSortActive && initialSections.length > 0 ? (
             <motion.div
