@@ -230,7 +230,7 @@ export default function Home() {
 
         {/* Dynamic Category Promo Grid Cards (Grid of aspect-3/4 blocks) */}
         {homepageCatCards.length > 0 && (
-          <section className="w-full mx-auto mb-20">
+          <section className="w-full mx-auto mb-4">
             {/* Categories Heading */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
