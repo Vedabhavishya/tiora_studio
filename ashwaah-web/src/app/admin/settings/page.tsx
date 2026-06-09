@@ -351,7 +351,7 @@ export default function SettingsPage() {
             <div className="min-h-[160px] relative flex flex-col items-center justify-center text-center p-6 border-b border-brand/10 bg-brand-light">
               {/* Simulated Content */}
               <div className="relative z-10 max-w-sm">
-                <span className="inline-flex items-center bg-[#5C1D16]/5 border border-[#5C1D16]/10 text-[#5C1D16] text-[8px] font-bold px-2 py-0.5 rounded-full mb-3 tracking-widest uppercase">
+                <span className="inline-flex items-center bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 text-[#1B2A4A] text-[8px] font-bold px-2 py-0.5 rounded-full mb-3 tracking-widest uppercase">
                   Curated for All. Customized for You
                 </span>
                 <h3 className="text-2xl font-playfair font-bold text-brand leading-tight mb-2">
@@ -361,10 +361,10 @@ export default function SettingsPage() {
             </div>
 
             {/* 2. Offer Carousel Banner Mockup (1cm to 2cm) */}
-            <div className="h-12 bg-[#FFFDF6] text-[#5C1D16] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#5C1D16]/10">
+            <div className="h-12 bg-[#FFFDF6] text-[#1B2A4A] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#1B2A4A]/10">
               {offers.length > 0 ? (
                 <div className="text-center w-full animate-pulse">
-                  <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#5C1D16]">
+                  <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#1B2A4A]">
                     📢 {offers[0].text}
                   </p>
                 </div>

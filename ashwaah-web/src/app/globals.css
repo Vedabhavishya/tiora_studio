@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #5C1D16;       /* Rich Maroon */
-  --color-brand-hover: #451510; /* Darker Maroon */
+  --color-brand: #1B2A4A;       /* Deep Navy Blue */
+  --color-brand-hover: #121D33; /* Darker Navy Blue */
   --color-brand-light: #F5EBE0; /* Warm Light Beige/Sand */
   --color-brand-dark: #333333;  /* Deep Charcoal */
   --color-brand-accent: #C5A059; /* Gold/Accent color */
