@@ -90,35 +90,86 @@ export default function CategoryFilterSection({
       .filter((t) => t.length > 0);
   }, [filterTypes]);
 
+  // Helper to check if a product matches a type, with special handling for T-Shirt vs Shirt
+  const isTypeMatch = (type: string, name: string, category: string, tags: string) => {
+    const lowerType = type.toLowerCase();
+    const lowerName = name.toLowerCase();
+    const lowerCategory = category.toLowerCase();
+    const lowerTags = tags.toLowerCase();
+
+    // Special handling: "T-Shirt" (or T-Shirts / Tshirt) covers Sweatshirts, Hoodies, Polos, Tees, and T-Shirts
+    if (
+      lowerType === "t-shirt" ||
+      lowerType === "t-shirts" ||
+      lowerType === "timages" ||
+      lowerType === "tshirts" ||
+      lowerType === "tshirt"
+    ) {
+      if (
+        lowerName.includes("sweatshirt") ||
+        lowerName.includes("hoodie") ||
+        lowerName.includes("t-shirt") ||
+        lowerName.includes("tshirt") ||
+        lowerName.includes("polo") ||
+        lowerName.includes("tee")
+      ) {
+        return true;
+      }
+    }
+
+    // Special handling: "Shirt" should NOT match "Sweatshirt"
+    if (lowerType === "shirt" || lowerType === "shirts") {
+      if (lowerName.includes("sweatshirt")) {
+        return false;
+      }
+    }
+
+    return (
+      lowerCategory.includes(lowerType) ||
+      lowerTags.includes(lowerType) ||
+      lowerName.includes(lowerType)
+    );
+  };
+
   // Helper for default type classification
   const classifyTypeFallback = (name: string, category: string) => {
-    if (name.includes("t-shirt") || name.includes("tshirt") || name.includes("polo") || name.includes("tee")) {
+    const lowerName = name.toLowerCase();
+    const lowerCategory = category.toLowerCase();
+
+    if (
+      lowerName.includes("sweatshirt") ||
+      lowerName.includes("hoodie") ||
+      lowerName.includes("t-shirt") ||
+      lowerName.includes("tshirt") ||
+      lowerName.includes("polo") ||
+      lowerName.includes("tee")
+    ) {
       return "T-Shirt";
-    } else if (name.includes("shirt")) {
+    } else if (lowerName.includes("shirt")) {
       return "Shirt";
     } else if (
-      category.includes("ethnic") ||
-      name.includes("kurta") ||
-      name.includes("kurti") ||
-      name.includes("lehenga") ||
-      name.includes("saree") ||
-      name.includes("sharara") ||
-      name.includes("anarkali")
+      lowerCategory.includes("ethnic") ||
+      lowerName.includes("kurta") ||
+      lowerName.includes("kurti") ||
+      lowerName.includes("lehenga") ||
+      lowerName.includes("saree") ||
+      lowerName.includes("sharara") ||
+      lowerName.includes("anarkali")
     ) {
       return "Ethnic Wear";
     } else if (
-      category.includes("suitings") ||
-      category.includes("work wear") ||
-      category.includes("office wear") ||
-      category.includes("corporate") ||
-      name.includes("blazer") ||
-      name.includes("suit") ||
-      name.includes("formal")
+      lowerCategory.includes("suitings") ||
+      lowerCategory.includes("work wear") ||
+      lowerCategory.includes("office wear") ||
+      lowerCategory.includes("corporate") ||
+      lowerName.includes("blazer") ||
+      lowerName.includes("suit") ||
+      lowerName.includes("formal")
     ) {
       return "Workwear";
-    } else if (name.includes("dress") || name.includes("gown") || name.includes("bodycon") || category.includes("dresses")) {
+    } else if (lowerName.includes("dress") || lowerName.includes("gown") || lowerName.includes("bodycon") || lowerCategory.includes("dresses")) {
       return "Dresses";
-    } else if (name.includes("jogger") || name.includes("pants") || name.includes("cargo") || name.includes("trousers")) {
+    } else if (lowerName.includes("jogger") || lowerName.includes("pants") || lowerName.includes("cargo") || lowerName.includes("trousers")) {
       return "Pants & Joggers";
     }
     return category || "Other";
@@ -135,14 +186,7 @@ export default function CategoryFilterSection({
       if (adminFilterTypes && adminFilterTypes.length > 0) {
         // Sort types by length descending to match most specific first
         const sortedAdminTypes = [...adminFilterTypes].sort((a, b) => b.length - a.length);
-        const matchedType = sortedAdminTypes.find((t) => {
-          const lowerT = t.toLowerCase();
-          return (
-            category.includes(lowerT) ||
-            tags.includes(lowerT) ||
-            name.includes(lowerT)
-          );
-        });
+        const matchedType = sortedAdminTypes.find((t) => isTypeMatch(t, name, category, tags));
         type = matchedType || "Other";
       } else {
         type = classifyTypeFallback(name, category);
