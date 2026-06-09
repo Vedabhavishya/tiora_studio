@@ -364,7 +364,7 @@ export default function SettingsPage() {
             <div className="h-12 bg-[#FFFDF6] text-[#5C1D16] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#5C1D16]/10">
               {offers.length > 0 ? (
                 <div className="text-center w-full animate-pulse">
-                  <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#C5A059]">
+                  <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[#5C1D16]">
                     📢 {offers[0].text}
                   </p>
                 </div>

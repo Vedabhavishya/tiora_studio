@@ -135,7 +135,7 @@ export default function Home() {
                     className="absolute inset-0 flex items-center justify-center px-4"
                   >
                     {offer.link ? (
-                      <Link href={offer.link} className="hover:text-white transition-colors duration-300 flex items-center gap-2">
+                      <Link href={offer.link} className="hover:text-brand-accent transition-colors duration-300 flex items-center gap-2">
                         <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em]">📢 {offer.text}</span>
                         <span className="text-[8px] md:text-[9px] font-black bg-[#C5A059] text-white px-2.5 py-0.5 rounded-full uppercase tracking-widest shadow-sm">Shop Now →</span>
                       </Link>
