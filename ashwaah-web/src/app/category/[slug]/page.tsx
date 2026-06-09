@@ -1,9 +1,7 @@
 import { db } from "@/db";
 import { navigationMenu, pageSections, products, homepageCategories } from "@/db/schema";
 import { eq, inArray, asc, or } from "drizzle-orm";
-import ProductCarousel from "@/components/ProductCarousel";
-import ProductCard from "@/components/ProductCard";
-import { ShoppingBag } from "lucide-react";
+import CategoryFilterSection from "@/components/CategoryFilterSection";
 import Link from "next/link";
 
 interface PageProps {
@@ -109,57 +107,13 @@ export default async function CategoryPage({ params }: PageProps) {
         </p>
       </div>
       
-      {/* Rendering: Sections (Carousel) or Product Grid */}
-      {sectionsWithProducts.length > 0 ? (
-        <div className="space-y-0">
-          {sectionsWithProducts.map((section) => (
-            <ProductCarousel 
-              key={section.id} 
-              title={section.title} 
-              products={section.products} 
-            />
-          ))}
-        </div>
-      ) : displayProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-8">
-          {displayProducts.map((p) => {
-            let firstImage = "/images/placeholder.png";
-            try {
-              const parsedImages = JSON.parse(p.images || "[]");
-              if (parsedImages.length > 0) {
-                firstImage = parsedImages[0];
-              } else if (p.imageUrl) {
-                firstImage = p.imageUrl;
-              }
-            } catch (e) {
-              if (p.imageUrl) firstImage = p.imageUrl;
-            }
-
-            const productProps = {
-              id: String(p.id),
-              name: p.name,
-              description: p.description || "",
-              price: p.salePrice || p.basePrice,
-              basePrice: p.basePrice,
-              salePrice: p.salePrice,
-              imageUrl: firstImage,
-              categorySlug: slug,
-              isCustomizable: p.isCustomizable || false
-            };
-            return <ProductCard key={p.id} product={productProps} />;
-          })}
-        </div>
-      ) : (
-        <section className="py-20 text-center bg-brand/5 rounded-[3rem] border border-brand/10 px-8">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <ShoppingBag className="text-[#C5A059]" size={32} />
-          </div>
-          <h2 className="text-2xl font-playfair font-bold text-brand mb-3">Collection Coming Soon</h2>
-          <p className="text-brand/60 max-w-sm mx-auto">
-            We are currently curating the perfect selection for this category. Check back soon for the latest arrivals.
-          </p>
-        </section>
-      )}
+      {/* Rendering sections and fallback products via interactive CategoryFilterSection component */}
+      <CategoryFilterSection
+        initialSections={sectionsWithProducts}
+        initialDisplayProducts={displayProducts}
+        categoryName={categoryName}
+        slug={slug}
+      />
     </div>
   );
 }
