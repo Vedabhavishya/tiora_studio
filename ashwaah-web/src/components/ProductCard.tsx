@@ -31,12 +31,10 @@ export default function ProductCard({ product }: { product: Product }) {
     : 0;
 
   const pathname = usePathname();
-  const hasItem = useWishlistStore((state) => state.hasItem);
+  const isWishlisted = useWishlistStore((state) => state.items.some((item) => item.productId === Number(product.id)));
   const addItem = useWishlistStore((state) => state.addItem);
   const removeItem = useWishlistStore((state) => state.removeItem);
   const isAuthenticated = useWishlistStore((state) => state.isAuthenticated);
-
-  const isWishlisted = hasItem(Number(product.id));
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();

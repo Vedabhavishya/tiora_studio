@@ -193,7 +193,7 @@ export default function Navbar() {
                 aria-label="Wishlist"
                 className="hover:text-[#C5A059] transition-colors relative p-2 cursor-pointer"
               >
-                <Heart className="h-5 w-5" />
+                <Heart className={`h-5 w-5 transition-all ${user && wishlistItems.length > 0 ? "fill-red-500 text-red-500" : ""}`} />
                 {user && wishlistItems.length > 0 && (
                   <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
                     {wishlistItems.length}
@@ -243,7 +243,7 @@ export default function Navbar() {
                 aria-label="Wishlist"
                 className="text-white relative p-2 cursor-pointer"
               >
-                <Heart className="h-5 w-5" />
+                <Heart className={`h-5 w-5 transition-all ${user && wishlistItems.length > 0 ? "fill-red-500 text-red-500" : ""}`} />
                 {user && wishlistItems.length > 0 && (
                   <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
                     {wishlistItems.length}

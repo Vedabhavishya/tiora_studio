@@ -48,12 +48,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const addItem = useCartStore((state) => state.addItem);
 
   const pathname = usePathname();
-  const hasItem = useWishlistStore((state) => state.hasItem);
+  const isWishlisted = useWishlistStore((state) => state.items.some((item) => item.productId === Number(id)));
   const addItemToWishlist = useWishlistStore((state) => state.addItem);
   const removeItemFromWishlist = useWishlistStore((state) => state.removeItem);
   const isAuthenticated = useWishlistStore((state) => state.isAuthenticated);
-
-  const isWishlisted = hasItem(Number(id));
 
   const handleWishlistClick = async () => {
     if (!isAuthenticated) {
