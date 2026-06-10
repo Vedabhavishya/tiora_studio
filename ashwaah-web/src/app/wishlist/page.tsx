@@ -278,17 +278,15 @@ export default function WishlistPage() {
                         item.totalStock === 0 ? "opacity-60 grayscale" : ""
                       }`}
                     />
-                    {item.totalStock === 0 && (
-                      <div className="absolute inset-x-0 bottom-0 bg-white py-2.5 text-center border-t border-brand/5 shadow-sm">
-                        <span className="text-xs font-black tracking-[0.2em] text-[#EF4444] uppercase">
-                          OUT OF STOCK
-                        </span>
-                      </div>
-                    )}
                   </Link>
 
                   {/* Card Info */}
                   <div className="pt-3 pb-3 px-3 flex flex-col flex-1">
+                    {item.totalStock === 0 && (
+                      <span className="text-[9px] font-black text-red-600 uppercase tracking-widest mb-1.5 block">
+                        OUT OF STOCK
+                      </span>
+                    )}
                     <h3 className="text-xs md:text-sm font-black tracking-widest text-[#1B3022] uppercase line-clamp-1 mb-0.5">
                       {item.name}
                     </h3>
@@ -299,19 +297,24 @@ export default function WishlistPage() {
                       ₹{item.price.toLocaleString()}
                     </p>
 
-                    {/* Move to Bag Button */}
-                    <button
-                      disabled={item.totalStock === 0}
-                      onClick={() => handleOpenMoveModal(item)}
-                      className={`w-full mt-auto flex items-center justify-center space-x-2 font-bold py-3.5 rounded-2xl transition-all text-xs tracking-wider uppercase shadow-md ${
-                        item.totalStock === 0
-                          ? "bg-[#1B3022]/10 text-[#1B3022]/30 cursor-not-allowed shadow-none border border-[#1B3022]/5"
-                          : "bg-[#064e3b] text-white hover:bg-[#32451B] cursor-pointer border border-transparent hover:border-brand-accent/20"
-                      }`}
-                    >
-                      <ShoppingBag size={14} />
-                      <span>{item.totalStock === 0 ? "Out of Stock" : "Move to Bag"}</span>
-                    </button>
+                    {/* Move to Bag or Show Similar Button */}
+                    {item.totalStock === 0 ? (
+                      <Link
+                        href={`/category/${item.category.toLowerCase().trim().replace(/\s+/g, "-")}`}
+                        className="w-full mt-auto flex items-center justify-center space-x-2 font-bold py-3.5 rounded-2xl transition-all text-xs tracking-wider uppercase shadow-md bg-[#064e3b] text-white hover:bg-[#32451B] border border-transparent hover:border-brand-accent/20 cursor-pointer"
+                      >
+                        <ShoppingBag size={14} />
+                        <span>SHOW SIMILAR</span>
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => handleOpenMoveModal(item)}
+                        className="w-full mt-auto flex items-center justify-center space-x-2 font-bold py-3.5 rounded-2xl transition-all text-xs tracking-wider uppercase shadow-md bg-[#064e3b] text-white hover:bg-[#32451B] border border-transparent hover:border-brand-accent/20 cursor-pointer"
+                      >
+                        <ShoppingBag size={14} />
+                        <span>MOVE TO BAG</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
