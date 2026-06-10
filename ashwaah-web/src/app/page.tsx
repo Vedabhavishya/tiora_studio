@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import ProductGrid from "@/components/ProductGrid";
 
 type NavItem = {
@@ -198,45 +197,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Section */}
-      <header className="relative w-full min-h-[45vh] flex flex-col items-center justify-center overflow-hidden border-b border-brand/10 bg-brand-light pt-10 pb-12">
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-20 text-center px-4 max-w-5xl mx-auto"
-        >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center space-x-2 bg-brand/5 border border-brand/10 text-brand text-xs font-bold px-4 py-1.5 rounded-full mb-6 shadow-sm tracking-widest uppercase"
-          >
-            <Sparkles size={14} className="text-brand-accent" />
-            <span>Curated for All. Customized for You</span>
-          </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-4xl md:text-6xl font-playfair font-bold tracking-tight mb-6 text-brand leading-[1.15]"
-          >
-            Standard Sizes. <br /> <span className="text-brand-accent italic">Perfected Fits.</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-brand/70 text-base md:text-lg max-w-2xl mx-auto mb-4 font-inter leading-relaxed"
-          >
-            At Ashwaah, Our crafted designs meet your individuality — pre‑made or personalised, always perfect for you
-          </motion.p>
-        </motion.div>
-        
-        {/* Subtle background element */}
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-brand/5 to-transparent"></div>
-      </header>
 
       {/* Dynamic Promo Banner Image */}
       {bannerUrl && (

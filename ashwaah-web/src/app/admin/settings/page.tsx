@@ -386,22 +386,9 @@ export default function SettingsPage() {
 
         {/* Live Preview Column */}
         <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-brand/5 flex flex-col h-fit">
-          <h2 className="text-xl font-playfair font-bold text-brand mb-6 border-b border-brand/5 pb-4">Aesthetic Hero & Offer Preview</h2>
+          <h2 className="text-xl font-playfair font-bold text-brand mb-6 border-b border-brand/5 pb-4">Aesthetic Offer & Banner Preview</h2>
           
           <div className="rounded-2xl border border-brand/10 overflow-hidden relative flex flex-col p-0 bg-brand/5">
-            
-            {/* 1. Hero Section Mockup (Plain background) */}
-            <div className="min-h-[160px] relative flex flex-col items-center justify-center text-center p-6 border-b border-brand/10 bg-brand-light">
-              {/* Simulated Content */}
-              <div className="relative z-10 max-w-sm">
-                <span className="inline-flex items-center bg-[#3E5622]/5 border border-[#3E5622]/10 text-[#3E5622] text-[8px] font-bold px-2 py-0.5 rounded-full mb-3 tracking-widest uppercase">
-                  Curated for All. Customized for You
-                </span>
-                <h3 className="text-2xl font-playfair font-bold text-brand leading-tight mb-2">
-                  Standard Sizes. <br /> <span className="text-[#C5A059] italic">Perfected Fits.</span>
-                </h3>
-              </div>
-            </div>
 
             {/* 2. Offer Carousel Banner Mockup (1cm to 2cm) */}
             <div className="h-14 bg-[#F5EBE0] text-[#3E5622] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#3E5622]/10">
