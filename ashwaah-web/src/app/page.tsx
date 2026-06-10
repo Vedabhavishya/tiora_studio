@@ -134,15 +134,15 @@ export default function Home() {
     <div className="min-h-screen bg-brand-light text-brand font-sans selection:bg-brand-accent/30">
       {/* Dynamic Offer Announcement Bar (Carousel, 1cm - 2cm Height) */}
       {offers.length > 0 && (
-        <div className="w-full bg-[#F5EBE0] text-[#3E5622] h-14 flex items-center justify-center overflow-hidden border-b border-[#3E5622]/10 relative z-30 shadow-sm">
+        <div className="w-full bg-[#F5EBE0] text-[#3E5622] h-16 flex items-center justify-center overflow-hidden border-b border-[#3E5622]/10 relative z-30 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 w-full text-center flex items-center justify-center h-full relative">
             <AnimatePresence mode="wait">
               {offers.map((offer, idx) => {
                 const { title, subtitle } = parseOfferText(offer.text);
                  const TicketContent = (
-                  <div className={`relative flex items-center h-10 bg-[#3E5622] text-white px-5 rounded-l-xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
+                  <div className={`relative flex items-center h-12 bg-[#3E5622] text-white px-6 rounded-l-xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
                     {/* Left Title */}
-                    <span className={`font-extrabold text-xs md:text-sm uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap ${subtitle ? "pr-4" : ""}`}>
+                    <span className={`font-extrabold text-sm md:text-base uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap ${subtitle ? "pr-4" : ""}`}>
                       {title}
                     </span>
                     
@@ -150,13 +150,13 @@ export default function Home() {
                       <>
                         {/* Dashed Divider with top/bottom circular cutouts */}
                         <div className="relative h-full flex items-center px-1">
-                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#F5EBE0] rounded-full"></div>
+                          <div className="absolute -top-[7px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#F5EBE0] rounded-full"></div>
                           <div className="h-3/5 border-l border-dashed border-white/50"></div>
-                          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#F5EBE0] rounded-full"></div>
+                          <div className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#F5EBE0] rounded-full"></div>
                         </div>
                         
                         {/* Right Subtitle */}
-                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest pl-3 pr-2 opacity-95 whitespace-nowrap">
+                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest pl-3 pr-2 opacity-95 whitespace-nowrap">
                           {subtitle}
                         </span>
                       </>
@@ -164,7 +164,7 @@ export default function Home() {
 
                     {/* Jagged right edge (torn coupon effect) */}
                     <div className="absolute right-0 top-0 bottom-0 w-1 flex flex-col justify-between py-1">
-                      {Array.from({ length: 4 }).map((_, i) => (
+                      {Array.from({ length: 5 }).map((_, i) => (
                         <div key={i} className="w-1 h-1.5 bg-[#F5EBE0] rounded-l-full"></div>
                       ))}
                     </div>
