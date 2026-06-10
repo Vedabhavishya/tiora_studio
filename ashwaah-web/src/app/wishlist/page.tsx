@@ -226,11 +226,11 @@ export default function WishlistPage() {
       <main className="max-w-7xl mx-auto px-6 md:px-12 py-16">
         
         {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="font-playfair text-3xl md:text-4xl font-medium tracking-wide mb-2">My Wishlist</h1>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#1B3022]/60">
-            {wishlistItems.length} {wishlistItems.length === 1 ? "Item" : "Items"} Saved
-          </p>
+        <div className="flex items-center space-x-4 mb-10">
+          <h1 className="text-4xl font-playfair font-bold text-brand">My Wishlist</h1>
+          <span className="bg-brand/5 text-brand/60 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+            {wishlistItems.length} {wishlistItems.length === 1 ? "Item" : "Items"}
+          </span>
         </div>
 
         {/* Empty State */}
