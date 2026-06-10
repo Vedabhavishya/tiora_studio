@@ -1,17 +1,15 @@
+import { verifyAdminRequest } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { users, orders, orderItems } from "@/db/schema";
 import { sql, eq, and, gte, lt } from "drizzle-orm";
-import { cookies } from "next/headers";
 
-async function isAuthenticated() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("admin_session")?.value;
-  return session === "9999999999";
+async function isAuthenticated(request?: Request) {
+  return !!(await verifyAdminRequest(request));
 }
 
-export async function GET() {
-  if (!await isAuthenticated()) {
+export async function GET(request: Request) {
+  if (!await isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

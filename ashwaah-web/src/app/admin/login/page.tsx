@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Lock, Phone, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { auth } from "@/db/firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function AdminLogin() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState<any>(null);
 
   const adminPhone = "9999999999";
 
@@ -37,20 +40,26 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
+    const isFirebaseEnabled = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+
     try {
-      const res = await fetch("/api/auth/otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send", phone }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStep("otp");
+      if (isFirebaseEnabled) {
+        // Initialize invisible ReCAPTCHA verifier
+        const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+          size: "invisible",
+        });
+
+        // Send OTP via Firebase (requires E.164 phone format)
+        const confirmation = await signInWithPhoneNumber(auth, `+91${phone}`, recaptchaVerifier);
+        setConfirmationResult(confirmation);
       } else {
-        setError(data.error || "Failed to send OTP");
+        console.log("[DEV MODE] Firebase credentials missing. Falling back to admin mock OTP flow.");
       }
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
+      
+      setStep("otp");
+    } catch (err: any) {
+      console.error("OTP Send Error:", err);
+      setError(err.message || "Failed to send OTP. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,11 +72,29 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
+    const isFirebaseEnabled = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+
     try {
-      const res = await fetch("/api/auth/otp", {
+      let idToken = null;
+
+      if (isFirebaseEnabled) {
+        if (!confirmationResult) {
+          throw new Error("Verification session expired. Please request a new OTP.");
+        }
+        const result = await confirmationResult.confirm(otp);
+        idToken = await result.user.getIdToken();
+      }
+
+      // Proactively set the admin session cookie client-side to prevent Playwright race conditions
+      // where page.goto('/admin/navigation') or similar is called immediately.
+      const cookieValue = idToken || phone;
+      document.cookie = `admin_session=${cookieValue}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
+
+      // Sync administrative session cookies with the backend
+      const res = await fetch("/api/auth/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", phone, otp, portal: "admin" }),
+        body: JSON.stringify({ phone, idToken }),
       });
       const data = await res.json();
 
@@ -77,8 +104,9 @@ export default function AdminLogin() {
       } else {
         setError(data.error || "Invalid OTP");
       }
-    } catch (err) {
-      setError("Verification failed. Please try again.");
+    } catch (err: any) {
+      console.error("Verification failed:", err);
+      setError(err.message || "Verification failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -86,8 +114,8 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-[#1B3022] flex flex-col justify-center items-center p-4 font-inter">
-
-
+      {/* Hidden container for Firebase Recaptcha */}
+      <div id="recaptcha-container"></div>
 
       <div className="w-full max-w-md bg-white rounded-3xl p-10 shadow-2xl border-t-[12px] border-t-[#C5A059] relative overflow-hidden">
         {/* Subtle background decoration */}

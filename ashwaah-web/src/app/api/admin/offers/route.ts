@@ -1,17 +1,15 @@
+import { verifyAdminRequest } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { offerBanners } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
-async function isAdmin() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("admin_session")?.value;
-  return session === "9999999999";
+async function isAdmin(request?: Request) {
+  return !!(await verifyAdminRequest(request));
 }
 
 // GET all offer banners (publicly accessible)
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const data = await db.select().from(offerBanners).orderBy(asc(offerBanners.order));
     return NextResponse.json({ success: true, data });
@@ -23,7 +21,7 @@ export async function GET() {
 
 // POST a new offer banner
 export async function POST(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -50,7 +48,7 @@ export async function POST(request: Request) {
 
 // PUT (update) an offer banner or bulk reorder
 export async function PUT(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -95,7 +93,7 @@ export async function PUT(request: Request) {
 
 // DELETE an offer banner
 export async function DELETE(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

@@ -297,7 +297,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                     onClick={() => setIsSizeGuideOpen(true)}
                     className="text-[10px] text-brand/40 hover:text-brand-accent font-bold uppercase tracking-widest transition-colors underline underline-offset-4"
                   >
-                    Size Guide
+                    Fit Guide
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-3">

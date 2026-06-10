@@ -164,7 +164,7 @@ export default function CartPage() {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
                   <div>
                     <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="text-lg font-bold text-brand leading-tight">{item.name}</h3>
+                      <h3 className="text-lg font-bold text-brand leading-tight uppercase">{item.name.toUpperCase()}</h3>
                       {isBespoke && (
                         <div className="flex items-center space-x-1 px-2 py-0.5 bg-[#C5A059] text-white rounded-full">
                           <Scissors size={10} />

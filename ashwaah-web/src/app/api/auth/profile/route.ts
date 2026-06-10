@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { getVerifiedPhoneFromCookie } from "@/db/auth-helper";
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const phone = cookieStore.get("auth_session")?.value;
+    const phone = await getVerifiedPhoneFromCookie("auth_session");
 
     if (!phone) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
@@ -31,4 +30,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: "Failed to update profile" }, { status: 500 });
   }
 }
-

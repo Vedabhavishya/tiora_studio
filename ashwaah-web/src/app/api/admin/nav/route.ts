@@ -1,13 +1,11 @@
+import { verifyAdminRequest } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { navigationMenu, pageSections } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
-async function isAdmin() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("admin_session")?.value;
-  return session === "9999999999";
+async function isAdmin(request?: Request) {
+  return !!(await verifyAdminRequest(request));
 }
 
 export async function GET(request: Request) {
@@ -15,7 +13,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const showAll = searchParams.get("all") === "true";
     
-    if (showAll && !await isAdmin()) {
+    if (showAll && !await isAdmin(request)) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
@@ -36,7 +34,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -68,7 +66,7 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -101,7 +99,7 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

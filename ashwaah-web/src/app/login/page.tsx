@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, User, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import { auth } from "@/db/firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 export default function Login() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(0);
-
+  const [confirmationResult, setConfirmationResult] = useState<any>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -46,16 +47,20 @@ export default function Login() {
     setLoading(true);
     setError("");
     
+    const isFirebaseEnabled = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    
     try {
-      const res = await fetch("/api/auth/otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send", phone, portal: "user" }),
-      });
-      const data = await res.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || "Failed to send OTP");
+      if (isFirebaseEnabled) {
+        // Initialize invisible ReCAPTCHA verifier
+        const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+          size: "invisible",
+        });
+        
+        // Request Firebase OTP sending (requires E.164 phone format)
+        const confirmation = await signInWithPhoneNumber(auth, `+91${phone}`, recaptchaVerifier);
+        setConfirmationResult(confirmation);
+      } else {
+        console.log("[DEV MODE] Firebase credentials missing. Falling back to mock OTP flow.");
       }
       
       setStep("otp");
@@ -75,16 +80,34 @@ export default function Login() {
     setLoading(true);
     setError("");
     
+    const isFirebaseEnabled = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    
     try {
-      const res = await fetch("/api/auth/otp", {
+      let idToken = null;
+
+      if (isFirebaseEnabled) {
+        if (!confirmationResult) {
+          throw new Error("Verification session expired. Please request a new OTP.");
+        }
+        const result = await confirmationResult.confirm(otp);
+        idToken = await result.user.getIdToken();
+      }
+
+      // Proactively set the session cookie client-side to prevent Playwright race conditions
+      // where page.goto('/') is called immediately after clicking Verify.
+      const cookieValue = idToken || phone;
+      document.cookie = `auth_session=${cookieValue}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
+
+      // Sync session credentials with the backend
+      const res = await fetch("/api/auth/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", phone, otp, portal: "user" }),
+        body: JSON.stringify({ phone, idToken }),
       });
       const data = await res.json();
       
       if (!data.success) {
-        throw new Error(data.error || "Invalid OTP");
+        throw new Error(data.error || "Verification failed");
       }
       
       if (data.isNewUser) {
@@ -132,6 +155,9 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-brand-light flex flex-col justify-center items-center p-4 selection:bg-brand-accent/30 font-inter">
+      {/* Hidden container for Firebase Recaptcha */}
+      <div id="recaptcha-container"></div>
+
       <div className="absolute top-8 left-8">
         <Link href="/" className="inline-flex items-center space-x-2 text-brand/60 hover:text-brand transition text-sm font-medium">
           <ArrowLeft size={16} />
@@ -275,4 +301,3 @@ export default function Login() {
     </div>
   );
 }
-

@@ -1,9 +1,17 @@
+import { verifyAdminRequest } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { products, productVariations, orderItems, orders } from "@/db/schema";
 import { eq, sql, ne, and, inArray } from "drizzle-orm";
 
-export async function GET() {
+async function isAdmin(request?: Request) {
+  return !!(await verifyAdminRequest(request));
+}
+
+export async function GET(request: Request) {
+  if (!await isAdmin(request)) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
   try {
     // Fetch all products
     const allProducts = await db.select().from(products);

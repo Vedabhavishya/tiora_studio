@@ -1,13 +1,11 @@
+import { verifyAdminRequest } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { siteSettings } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 
-async function isAdmin() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("admin_session")?.value;
-  return session === "9999999999";
+async function isAdmin(request?: Request) {
+  return !!(await verifyAdminRequest(request));
 }
 
 // GET setting(s)
@@ -34,7 +32,7 @@ export async function GET(request: Request) {
 
 // POST/PUT setting
 export async function POST(request: Request) {
-  if (!await isAdmin()) {
+  if (!await isAdmin(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { orders, orderItems, products, users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { getVerifiedPhoneFromCookie } from "@/db/auth-helper";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const phoneNumber = cookieStore.get("auth_session")?.value;
+    const phoneNumber = await getVerifiedPhoneFromCookie("auth_session");
 
     if (!phoneNumber) {
       return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });

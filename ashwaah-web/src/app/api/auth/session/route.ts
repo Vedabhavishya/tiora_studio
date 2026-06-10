@@ -3,26 +3,27 @@ import { cookies } from "next/headers";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { getVerifiedPhoneFromCookie } from "@/db/auth-helper";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const session = cookieStore.get("auth_session")?.value;
+    const phoneNumber = await getVerifiedPhoneFromCookie("auth_session");
 
-    if (!session) {
+    if (!phoneNumber) {
       return NextResponse.json({ authenticated: false });
     }
 
     const userResult = await db.select()
       .from(users)
-      .where(eq(users.phoneNumber, session))
+      .where(eq(users.phoneNumber, phoneNumber))
       .limit(1);
 
     const user = userResult[0];
 
     if (!user) {
       const response = NextResponse.json({ authenticated: false });
-      response.cookies.delete("auth_session");
+      const cookieStore = await cookies();
+      cookieStore.delete("auth_session");
       return response;
     }
 
@@ -34,6 +35,7 @@ export async function GET() {
       } 
     });
   } catch (error) {
+    console.error("Session fetch error:", error);
     return NextResponse.json({ authenticated: false }, { status: 500 });
   }
 }

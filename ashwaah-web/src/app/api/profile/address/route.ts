@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { getVerifiedPhoneFromCookie } from "@/db/auth-helper";
 
 // Helper: get user by phone from cookie
 async function getUserFromCookie() {
-  const cookieStore = await cookies();
-  const phoneNumber = cookieStore.get("auth_session")?.value;
+  const phoneNumber = await getVerifiedPhoneFromCookie("auth_session");
   if (!phoneNumber) return { user: null, phoneNumber: null };
 
   const rows = await db.select().from(users).where(eq(users.phoneNumber, phoneNumber)).limit(1);
