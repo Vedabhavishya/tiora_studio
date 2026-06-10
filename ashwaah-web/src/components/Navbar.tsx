@@ -138,7 +138,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#3E5622] border-b border-white/10 shadow-lg font-inter">
+      <header className="sticky top-0 z-50 w-full bg-[#064e3b] border-b border-white/10 shadow-lg font-inter">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
@@ -189,7 +189,7 @@ export default function Navbar() {
               >
                 <Heart className="h-5 w-5 text-white" />
                 {user && wishlistItems.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#3E5622] text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                  <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#064e3b] text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#064e3b]">
                     {wishlistItems.length}
                   </span>
                 )}
@@ -197,7 +197,7 @@ export default function Navbar() {
 
               <Link href={user ? "/cart" : "/login"} aria-label="Cart" className="hover:text-[#C5A059] transition-colors relative p-2">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#3E5622] text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#064e3b] text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#064e3b]">
                   {cartCount}
                 </span>
               </Link>
@@ -233,7 +233,7 @@ export default function Navbar() {
               >
                 <Heart className="h-5 w-5 text-white" />
                 {user && wishlistItems.length > 0 && (
-                  <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#3E5622] text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                  <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#064e3b] text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#064e3b]">
                     {wishlistItems.length}
                   </span>
                 )}
@@ -241,7 +241,7 @@ export default function Navbar() {
 
               <Link href={user ? "/cart" : "/login"} aria-label="Cart" className="text-white relative p-2">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#3E5622] text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                <span className="absolute top-0 right-0 bg-[#FFFDF6] text-[#064e3b] text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#064e3b]">
                   {cartCount}
                 </span>
               </Link>
@@ -261,7 +261,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Panel */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#3E5622] border-t border-white/10 animate-in slide-in-from-top duration-300">
+          <div className="md:hidden bg-[#064e3b] border-t border-white/10 animate-in slide-in-from-top duration-300">
             <div className="px-6 pt-8 pb-12 space-y-4">
               {/* Dynamic categories moved to home page */}
               
@@ -273,7 +273,7 @@ export default function Navbar() {
                       className="flex items-center space-x-4 px-4 py-4 rounded-xl bg-white/5"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <div className="w-10 h-10 rounded-full bg-[#FFFDF6] flex items-center justify-center text-[#3E5622] font-bold">
+                      <div className="w-10 h-10 rounded-full bg-[#FFFDF6] flex items-center justify-center text-[#064e3b] font-bold">
                         {user.fullName?.charAt(0) || "U"}
                       </div>
                       <div>
@@ -373,7 +373,7 @@ export default function Navbar() {
               {/* Header */}
               <div className="p-6 border-b border-brand/5 flex items-center justify-between bg-brand/5">
                 <div className="flex items-center space-x-2 text-brand">
-                  <Heart className="h-5 w-5 fill-[#3E5622] text-[#3E5622]" />
+                  <Heart className="h-5 w-5 fill-[#064e3b] text-[#064e3b]" />
                   <span className="font-playfair text-lg font-bold">My Wishlist ({wishlistItems.length})</span>
                 </div>
                 <button
@@ -395,7 +395,7 @@ export default function Navbar() {
                         setIsWishlistOpen(false);
                         router.push("/");
                       }}
-                      className="mt-6 text-xs font-black uppercase tracking-widest bg-[#3E5622] text-white px-6 py-3 rounded-xl hover:bg-brand-hover transition shadow-md cursor-pointer"
+                      className="mt-6 text-xs font-black uppercase tracking-widest bg-[#064e3b] text-white px-6 py-3 rounded-xl hover:bg-brand-hover transition shadow-md cursor-pointer"
                     >
                       Explore Collections
                     </button>
@@ -423,10 +423,10 @@ export default function Navbar() {
                           <p className="text-xs font-black text-brand uppercase tracking-wider truncate mb-0.5">
                             {item.name}
                           </p>
-                          <p className="text-[10px] text-[#3E5622] font-bold uppercase tracking-widest mb-1">
+                          <p className="text-[10px] text-[#064e3b] font-bold uppercase tracking-widest mb-1">
                             {item.category}
                           </p>
-                          <p className="text-xs font-bold text-[#3E5622]">
+                          <p className="text-xs font-bold text-[#064e3b]">
                             ₹{item.price.toLocaleString()}
                           </p>
                         </div>

@@ -195,8 +195,8 @@ export default function WishlistPage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-[#F5EBE0]">
         <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-[#3E5622]" />
-          <p className="text-xs font-black uppercase tracking-widest text-[#3E5622]/60">Loading Wishlist...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-[#064e3b]" />
+          <p className="text-xs font-black uppercase tracking-widest text-[#064e3b]/60">Loading Wishlist...</p>
         </div>
       </div>
     );
@@ -235,14 +235,14 @@ export default function WishlistPage() {
         {/* Empty State */}
         {wishlistItems.length === 0 ? (
           <div className="text-center py-20 bg-[#FFFDF6] rounded-[2.5rem] border border-brand/5 shadow-sm max-w-xl mx-auto px-8">
-            <Heart className="mx-auto mb-6 opacity-20 text-[#3E5622] animate-pulse" size={56} />
+            <Heart className="mx-auto mb-6 opacity-20 text-[#064e3b] animate-pulse" size={56} />
             <h2 className="text-xl font-playfair font-bold text-[#1B3022] mb-3">Your wishlist is empty</h2>
             <p className="text-sm text-[#1B3022]/60 mb-8 max-w-sm mx-auto leading-relaxed">
               Explore our designer collections and save your favorite outfits here.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest bg-[#3E5622] text-white px-8 py-4 rounded-xl hover:bg-[#32451B] transition shadow-lg"
+              className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest bg-[#064e3b] text-white px-8 py-4 rounded-xl hover:bg-[#32451B] transition shadow-lg"
             >
               <span>Explore Collections</span>
               <ArrowRight size={14} />
@@ -290,7 +290,7 @@ export default function WishlistPage() {
                     <h3 className="text-xs md:text-sm font-black tracking-widest text-[#1B3022] uppercase line-clamp-1 mb-0.5">
                       {item.name}
                     </h3>
-                    <p className="text-[10px] md:text-xs text-[#3E5622] font-bold uppercase tracking-widest mb-1.5">
+                    <p className="text-[10px] md:text-xs text-[#064e3b] font-bold uppercase tracking-widest mb-1.5">
                       {item.category}
                     </p>
                     <p className="text-xs md:text-sm font-black text-[#1B3022] mb-3">
@@ -304,7 +304,7 @@ export default function WishlistPage() {
                       className={`w-full mt-auto flex items-center justify-center space-x-2 font-bold py-3.5 rounded-2xl transition-all text-xs tracking-wider uppercase shadow-md ${
                         item.totalStock === 0
                           ? "bg-[#1B3022]/10 text-[#1B3022]/30 cursor-not-allowed shadow-none border border-[#1B3022]/5"
-                          : "bg-[#3E5622] text-white hover:bg-[#32451B] cursor-pointer border border-transparent hover:border-brand-accent/20"
+                          : "bg-[#064e3b] text-white hover:bg-[#32451B] cursor-pointer border border-transparent hover:border-brand-accent/20"
                       }`}
                     >
                       <ShoppingBag size={14} />
@@ -366,7 +366,7 @@ export default function WishlistPage() {
                     <h2 className="text-base font-bold text-[#1B3022] leading-tight mb-1 truncate">
                       {selectedItem.name}
                     </h2>
-                    <p className="text-sm font-black text-[#3E5622]">
+                    <p className="text-sm font-black text-[#064e3b]">
                       ₹{selectedItem.price.toLocaleString()}
                     </p>
                   </div>
@@ -377,7 +377,7 @@ export default function WishlistPage() {
                 {/* Loading state for variations */}
                 {loadingDetails ? (
                   <div className="py-12 flex flex-col items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#3E5622] mb-3" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[#064e3b] mb-3" />
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#1B3022]/40">
                       Loading available options...
                     </p>
@@ -390,7 +390,7 @@ export default function WishlistPage() {
                       {availableColors.length > 0 && (
                         <div>
                           <span className="block text-xs font-black uppercase tracking-widest text-[#1B3022]/50 mb-3">
-                            Select Color: <span className="text-[#3E5622] font-black">{selectedColor}</span>
+                            Select Color: <span className="text-[#064e3b] font-black">{selectedColor}</span>
                           </span>
                           <div className="flex flex-wrap gap-3">
                             {availableColors.map((color) => (
@@ -416,7 +416,7 @@ export default function WishlistPage() {
                                 }}
                                 className={`relative w-8 h-8 rounded-full border p-0.5 transition-all ${
                                   selectedColor === color
-                                    ? "border-[#3E5622] scale-110 shadow-sm"
+                                    ? "border-[#064e3b] scale-110 shadow-sm"
                                     : "border-transparent hover:border-[#1B3022]/20"
                                 }`}
                                 title={color}
@@ -440,7 +440,7 @@ export default function WishlistPage() {
                       {!isSingleSize && availableSizes.length > 0 && (
                         <div>
                           <span className="block text-xs font-black uppercase tracking-widest text-[#1B3022]/50 mb-3">
-                            Select Size: <span className="text-[#3E5622] font-black">{selectedSize || "None"}</span>
+                            Select Size: <span className="text-[#064e3b] font-black">{selectedSize || "None"}</span>
                           </span>
                           <div className="flex flex-wrap gap-2.5">
                             {availableSizes.map((size) => {
@@ -458,8 +458,8 @@ export default function WishlistPage() {
                                     isOutOfStock
                                       ? "border-brand/5 bg-brand/5 text-brand/20 cursor-not-allowed line-through"
                                       : selectedSize === size
-                                      ? "bg-[#3E5622] text-white border-transparent scale-105 shadow-sm"
-                                      : "border-[#1B3022]/10 bg-white text-[#1B3022] hover:border-[#3E5622]/50 hover:bg-[#3E5622]/5"
+                                      ? "bg-[#064e3b] text-white border-transparent scale-105 shadow-sm"
+                                      : "border-[#1B3022]/10 bg-white text-[#1B3022] hover:border-[#064e3b]/50 hover:bg-[#064e3b]/5"
                                   }`}
                                 >
                                   {size}
@@ -477,7 +477,7 @@ export default function WishlistPage() {
                         className={`w-full py-4 rounded-2xl font-bold text-sm tracking-wider uppercase transition-all shadow-lg mt-8 flex items-center justify-center space-x-2 ${
                           !selectedColor || !selectedSize
                             ? "bg-[#1B3022]/15 text-[#1B3022]/30 cursor-not-allowed"
-                            : "bg-[#3E5622] text-white hover:bg-[#32451B] active:scale-[0.98] cursor-pointer"
+                            : "bg-[#064e3b] text-white hover:bg-[#32451B] active:scale-[0.98] cursor-pointer"
                         }`}
                       >
                         <Check size={16} />

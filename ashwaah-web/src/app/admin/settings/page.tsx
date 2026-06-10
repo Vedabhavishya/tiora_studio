@@ -391,12 +391,12 @@ export default function SettingsPage() {
           <div className="rounded-2xl border border-brand/10 overflow-hidden relative flex flex-col p-0 bg-brand/5">
 
             {/* 2. Offer Carousel Banner Mockup */}
-            <div className="h-24 bg-[#F5EBE0] text-[#3E5622] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#3E5622]/10">
+            <div className="h-24 bg-[#F5EBE0] text-[#064e3b] flex items-center justify-center px-4 relative z-10 shadow-sm border-b border-[#064e3b]/10">
               {offers.length > 0 ? (
                 (() => {
                   const { title, subtitle } = parseOfferText(offers[0].text);
                   return (
-                    <div className={`relative flex items-center h-16 bg-[#3E5622] text-white px-10 rounded-l-2xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
+                    <div className={`relative flex items-center h-16 bg-[#064e3b] text-white px-10 rounded-l-2xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
                       {/* Left Title */}
                       <span className={`font-extrabold text-lg md:text-xl uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap ${subtitle ? "pr-4" : ""}`}>
                         {title}

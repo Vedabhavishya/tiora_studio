@@ -40,7 +40,7 @@ export default function ProfileDropdown({ user, onLogout }: ProfileDropdownProps
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center bg-white/5 w-10 h-10 rounded-full hover:bg-white/10 transition-all border border-white/5 group"
       >
-        <div className="w-7 h-7 rounded-full bg-[#FFFDF6] flex items-center justify-center text-[10px] text-[#3E5622] font-bold shadow-sm">
+        <div className="w-7 h-7 rounded-full bg-[#FFFDF6] flex items-center justify-center text-[10px] text-[#064e3b] font-bold shadow-sm">
           {initials}
         </div>
       </button>

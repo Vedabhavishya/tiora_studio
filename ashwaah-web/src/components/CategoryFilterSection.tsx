@@ -498,7 +498,7 @@ export default function CategoryFilterSection({
                     onClick={() => handleSizeToggle(size)}
                     className={`h-9 min-w-[2.25rem] px-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border flex items-center justify-center gap-1.5 ${
                       isChecked
-                        ? "bg-[#3E5622] border-[#3E5622] text-white shadow-sm"
+                        ? "bg-[#064e3b] border-[#064e3b] text-white shadow-sm"
                         : "bg-white border-brand/10 text-brand hover:border-brand/30 hover:bg-brand/5"
                     }`}
                   >

@@ -134,13 +134,13 @@ export default function Home() {
     <div className="min-h-screen bg-brand-light text-brand font-sans selection:bg-brand-accent/30">
       {/* Dynamic Offer Announcement Bar (Carousel, 1cm - 2cm Height) */}
       {offers.length > 0 && (
-        <div className="w-full bg-[#F5EBE0] text-[#3E5622] h-24 flex items-center justify-center overflow-hidden border-b border-[#3E5622]/10 relative z-30 shadow-sm">
+        <div className="w-full bg-[#F5EBE0] text-[#064e3b] h-24 flex items-center justify-center overflow-hidden border-b border-[#064e3b]/10 relative z-30 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 w-full text-center flex items-center justify-center h-full relative">
             <AnimatePresence mode="wait">
               {offers.map((offer, idx) => {
                 const { title, subtitle } = parseOfferText(offer.text);
                  const TicketContent = (
-                  <div className={`relative flex items-center h-16 bg-[#3E5622] text-white px-10 rounded-l-2xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
+                  <div className={`relative flex items-center h-16 bg-[#064e3b] text-white px-10 rounded-l-2xl rounded-r-md shadow-md overflow-hidden font-inter ${!subtitle ? "justify-center" : ""}`}>
                     {/* Left Title */}
                     <span className={`font-extrabold text-lg md:text-xl uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap ${subtitle ? "pr-4" : ""}`}>
                       {title}
@@ -240,7 +240,7 @@ export default function Home() {
                   href={item.href} 
                   className="group flex flex-col items-center shrink-0"
                 >
-                  <div className="w-32 h-32 md:w-48 md:h-48 rounded-xl overflow-hidden border-2 border-[#3E5622]/30 shadow-lg transition-transform duration-500 group-hover:scale-105 group-hover:border-[#3E5622] group-hover:shadow-[#3E5622]/20 relative">
+                  <div className="w-32 h-32 md:w-48 md:h-48 rounded-xl overflow-hidden border-2 border-[#064e3b]/30 shadow-lg transition-transform duration-500 group-hover:scale-105 group-hover:border-[#064e3b] group-hover:shadow-[#064e3b]/20 relative">
                     <img 
                       src={item.imageUrl || "/images/placeholder.png"} 
                       alt={item.label} 
@@ -248,7 +248,7 @@ export default function Home() {
                       onError={e => (e.currentTarget.src = "/images/placeholder.png")}
                     />
                   </div>
-                  <span className="mt-4 text-xs md:text-sm font-bold tracking-wide text-brand/80 group-hover:text-[#3E5622] transition-colors text-center w-full max-w-[12rem] break-words block">
+                  <span className="mt-4 text-xs md:text-sm font-bold tracking-wide text-brand/80 group-hover:text-[#064e3b] transition-colors text-center w-full max-w-[12rem] break-words block">
                     {item.label}
                   </span>
                 </Link>
@@ -288,7 +288,7 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none"></div>
                     
                     {/* Overlaid coral-orange card at bottom */}
-                    <div className="relative z-10 w-full p-3 bg-[#3E5622]/90 backdrop-blur-sm text-white rounded-t-2xl text-center transition-all duration-300 group-hover:bg-[#3E5622] flex flex-col items-center justify-center">
+                    <div className="relative z-10 w-full p-3 bg-[#064e3b]/90 backdrop-blur-sm text-white rounded-t-2xl text-center transition-all duration-300 group-hover:bg-[#064e3b] flex flex-col items-center justify-center">
                       <span className="text-[9px] md:text-[10px] tracking-wider uppercase font-medium text-center w-full block break-words">
                         {item.name}
                       </span>
