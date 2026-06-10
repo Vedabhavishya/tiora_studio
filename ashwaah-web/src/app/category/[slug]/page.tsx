@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { navigationMenu, pageSections, products, homepageCategories } from "@/db/schema";
+import { navigationMenu, pageSections, products, homepageCategories, productVariations } from "@/db/schema";
 import { eq, inArray, asc, or } from "drizzle-orm";
 import CategoryFilterSection from "@/components/CategoryFilterSection";
 import Link from "next/link";
@@ -97,6 +97,46 @@ export default async function CategoryPage({ params }: PageProps) {
         )
       );
   }
+
+  // 5. Query sizes (variations) for all products in this category
+  const allProductIds = [
+    ...displayProducts.map((p) => p.id),
+    ...sectionsWithProducts.flatMap((s) => (s.products || []).map((p: any) => p.id)),
+  ];
+
+  let allVariations: any[] = [];
+  if (allProductIds.length > 0) {
+    allVariations = await db.select()
+      .from(productVariations)
+      .where(inArray(productVariations.productId, allProductIds));
+  }
+
+  // Group sizes by product ID
+  const sizeMap = new Map<number, string[]>();
+  allVariations.forEach((v) => {
+    if (!v.productId || !v.size) return;
+    const currentSizes = sizeMap.get(v.productId) || [];
+    const normalizedSize = v.size.trim();
+    if (normalizedSize && !currentSizes.includes(normalizedSize)) {
+      currentSizes.push(normalizedSize);
+    }
+    sizeMap.set(v.productId, currentSizes);
+  });
+
+  // Attach sizes to displayProducts
+  displayProducts = displayProducts.map((p) => ({
+    ...p,
+    sizes: sizeMap.get(p.id) || [],
+  }));
+
+  // Attach sizes to sectionsWithProducts
+  sectionsWithProducts = sectionsWithProducts.map((s) => ({
+    ...s,
+    products: (s.products || []).map((p: any) => ({
+      ...p,
+      sizes: sizeMap.get(p.id) || [],
+    })),
+  }));
 
   return (
     <div className="w-full bg-brand-light min-h-[calc(100vh-64px)] flex flex-col">

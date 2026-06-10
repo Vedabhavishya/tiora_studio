@@ -19,6 +19,7 @@ interface Product {
   gender: string | null;
   isCustomizable: boolean | null;
   tags?: string | null;
+  sizes?: string[];
 }
 
 interface Section {
@@ -235,10 +236,23 @@ export default function CategoryFilterSection({
   // 4. State Management (Multi-select arrays)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
-  const isFilterOrSortActive = selectedTypes.length > 0 || selectedColors.length > 0 || sortBy !== "default";
+  const isFilterOrSortActive = selectedTypes.length > 0 || selectedColors.length > 0 || selectedSizes.length > 0 || sortBy !== "default";
+
+  // Determine if this is a shoes/footwear category
+  const isShoesCategory = useMemo(() => {
+    const term = (categoryName || slug || "").toLowerCase();
+    return term.includes("shoe") || term.includes("footwear") || term.includes("slipper") || term.includes("sandal") || term.includes("flip-flop") || term.includes("flip flop");
+  }, [categoryName, slug]);
+
+  const availableSizes = useMemo(() => {
+    return isShoesCategory 
+      ? ["5", "6", "7", "8", "9", "10", "11", "12"]
+      : ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
+  }, [isShoesCategory]);
 
   // 5. Calculate counts dynamically based on the current collection
   const typeCounts = useMemo(() => {
@@ -276,6 +290,18 @@ export default function CategoryFilterSection({
     return counts;
   }, [productsWithTypes]);
 
+  const sizeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    productsWithTypes.forEach((p) => {
+      const sizes = p.sizes || [];
+      sizes.forEach((s) => {
+        const normalized = s.toUpperCase().trim();
+        counts[normalized] = (counts[normalized] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [productsWithTypes]);
+
   // 6. Filtering and Sorting logic
   const filteredAndSortedProducts = useMemo(() => {
     let list = [...productsWithTypes];
@@ -300,6 +326,14 @@ export default function CategoryFilterSection({
       });
     }
 
+    // Filter by selected sizes (OR logic: show products matching any selected size)
+    if (selectedSizes.length > 0) {
+      list = list.filter((p) => {
+        const pSizes = (p.sizes || []).map((s) => s.toUpperCase().trim());
+        return selectedSizes.some((sz) => pSizes.includes(sz.toUpperCase().trim()));
+      });
+    }
+
     // Sort by Price (salePrice if available, otherwise basePrice)
     if (sortBy === "price-asc") {
       list.sort((a, b) => {
@@ -316,7 +350,7 @@ export default function CategoryFilterSection({
     }
 
     return list;
-  }, [productsWithTypes, selectedTypes, selectedColors, sortBy]);
+  }, [productsWithTypes, selectedTypes, selectedColors, selectedSizes, sortBy]);
 
   const handleTypeToggle = (type: string) => {
     setSelectedTypes((prev) =>
@@ -330,9 +364,16 @@ export default function CategoryFilterSection({
     );
   };
 
+  const handleSizeToggle = (size: string) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    );
+  };
+
   const handleClearFilters = () => {
     setSelectedTypes([]);
     setSelectedColors([]);
+    setSelectedSizes([]);
     setSortBy("default");
   };
 
@@ -350,7 +391,7 @@ export default function CategoryFilterSection({
             {isMobileFiltersOpen ? "Hide Filters" : "Show Filters"}
           </span>
           <span className="text-[#C5A059] font-black">
-            {isFilterOrSortActive ? `(${selectedTypes.length + selectedColors.length} Active)` : ""}
+            {isFilterOrSortActive ? `(${selectedTypes.length + selectedColors.length + selectedSizes.length} Active)` : ""}
           </span>
         </button>
       </div>
@@ -442,7 +483,35 @@ export default function CategoryFilterSection({
           </div>
         )}
 
-        {/* Section 3: Sort By */}
+        {/* Section 3: Sizes */}
+        {availableSizes.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand/40 mb-3 ml-1">Sizes</h3>
+            <div className="flex flex-wrap gap-2">
+              {availableSizes.map((size) => {
+                const count = sizeCounts[size.toUpperCase()] || 0;
+                const isChecked = selectedSizes.includes(size);
+
+                return (
+                  <button
+                    key={size}
+                    onClick={() => handleSizeToggle(size)}
+                    className={`h-9 min-w-[2.25rem] px-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border flex items-center justify-center gap-1.5 ${
+                      isChecked
+                        ? "bg-[#3E5622] border-[#3E5622] text-white shadow-sm"
+                        : "bg-white border-brand/10 text-brand hover:border-brand/30 hover:bg-brand/5"
+                    }`}
+                  >
+                    <span>{size}</span>
+                    <span className={`text-[9px] ${isChecked ? "text-white/60" : "text-brand/30"}`}>({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Section 4: Sort By */}
         <div className="pt-4 border-t border-brand/5">
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand/40 mb-3 ml-1">Sort Products</h3>
           <div className="relative">
