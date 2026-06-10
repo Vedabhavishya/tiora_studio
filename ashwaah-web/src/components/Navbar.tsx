@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, ShoppingCart, User, Menu, X, LogOut, AlertCircle, BookOpen } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, LogOut, AlertCircle, BookOpen, Heart, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchModal from "./SearchModal";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 
 type NavItem = {
   id: number;
@@ -36,6 +38,13 @@ export default function Navbar() {
   const getTotalItems = useCartStore((state) => state.getTotalItems);
   const cartItems = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
+
+  // Wishlist store hooks
+  const wishlistItems = useWishlistStore((state) => state.items);
+  const fetchWishlist = useWishlistStore((state) => state.fetchWishlist);
+  const removeItem = useWishlistStore((state) => state.removeItem);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   useEffect(() => {
     setCartCount(getTotalItems());
@@ -74,12 +83,15 @@ export default function Navbar() {
         const sessionData = await sessionRes.json();
         if (sessionData.authenticated) {
           setUser(sessionData.user);
+          // Fetch wishlist
+          fetchWishlist();
         } else {
           setUser(null);
-          // If the user is logged out, ensure the cart is empty
+          // If the user is logged out, ensure the cart and wishlist are empty
           if (cartItems.length > 0) {
             clearCart();
           }
+          clearWishlist();
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -107,6 +119,7 @@ export default function Navbar() {
       if (res.ok) {
         setUser(null);
         clearCart();
+        clearWishlist();
         setIsLogoutModalOpen(false);
         router.push("/");
         router.refresh();
@@ -169,6 +182,25 @@ export default function Navbar() {
                 <span className="text-[10px] font-black uppercase tracking-widest hidden lg:block">My Story</span>
               </Link>
 
+              <button
+                onClick={() => {
+                  if (user) {
+                    setIsWishlistOpen(true);
+                  } else {
+                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+                  }
+                }}
+                aria-label="Wishlist"
+                className="hover:text-[#C5A059] transition-colors relative p-2 cursor-pointer"
+              >
+                <Heart className="h-5 w-5" />
+                {user && wishlistItems.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </button>
+
               <Link href={user ? "/cart" : "/login"} aria-label="Cart" className="hover:text-[#C5A059] transition-colors relative p-2">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[8px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
@@ -200,6 +232,25 @@ export default function Navbar() {
               <Link href="/my-story" aria-label="My Story" className="text-white p-2">
                 <BookOpen className="h-5 w-5" />
               </Link>
+              <button
+                onClick={() => {
+                  if (user) {
+                    setIsWishlistOpen(true);
+                  } else {
+                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+                  }
+                }}
+                aria-label="Wishlist"
+                className="text-white relative p-2 cursor-pointer"
+              >
+                <Heart className="h-5 w-5" />
+                {user && wishlistItems.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </button>
+
               <Link href={user ? "/cart" : "/login"} aria-label="Cart" className="text-white relative p-2">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute top-0 right-0 bg-[#C5A059] text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-[#3E5622]">
@@ -309,6 +360,115 @@ export default function Navbar() {
       )}
 
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
+      {/* Wishlist Sidebar Drawer Overlay */}
+      <AnimatePresence>
+        {isWishlistOpen && (
+          <div className="fixed inset-0 z-[100] flex justify-end">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsWishlistOpen(false)}
+              className="absolute inset-0 bg-black cursor-pointer"
+            />
+
+            {/* Drawer Body */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.3 }}
+              className="relative w-full max-w-md bg-[#FFFDF6] h-full shadow-2xl flex flex-col z-10"
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-brand/5 flex items-center justify-between bg-brand/5">
+                <div className="flex items-center space-x-2 text-brand">
+                  <Heart className="h-5 w-5 fill-[#3E5622] text-[#3E5622]" />
+                  <span className="font-playfair text-lg font-bold">My Wishlist ({wishlistItems.length})</span>
+                </div>
+                <button
+                  onClick={() => setIsWishlistOpen(false)}
+                  className="p-2 hover:bg-brand/10 rounded-full transition-all text-brand cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                {wishlistItems.length === 0 ? (
+                  <div className="text-center py-20 text-brand/35">
+                    <Heart className="mx-auto mb-4 opacity-20 text-brand animate-pulse" size={48} />
+                    <p className="text-xs font-black uppercase tracking-[0.25em] mb-4">Your wishlist is empty</p>
+                    <button
+                      onClick={() => {
+                        setIsWishlistOpen(false);
+                        router.push("/");
+                      }}
+                      className="mt-6 text-xs font-black uppercase tracking-widest bg-[#3E5622] text-white px-6 py-3 rounded-xl hover:bg-brand-hover transition shadow-md cursor-pointer"
+                    >
+                      Explore Collections
+                    </button>
+                  </div>
+                ) : (
+                  wishlistItems.map((item) => (
+                    <div
+                      key={item.productId}
+                      className="flex items-center justify-between p-3 bg-brand/5 border border-brand/5 rounded-2xl group transition-all hover:bg-brand/10"
+                    >
+                      {/* Thumbnail and Info */}
+                      <Link
+                        href={`/product/${item.productId}`}
+                        onClick={() => setIsWishlistOpen(false)}
+                        className="flex items-center space-x-4 flex-1 min-w-0 pr-4"
+                      >
+                        <div className="w-16 h-20 bg-brand-light/30 rounded-xl overflow-hidden flex-shrink-0 border border-brand/5">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-black text-brand uppercase tracking-wider truncate mb-0.5">
+                            {item.name}
+                          </p>
+                          <p className="text-[10px] text-[#3E5622] font-bold uppercase tracking-widest mb-1">
+                            {item.category}
+                          </p>
+                          <p className="text-xs font-bold text-[#3E5622]">
+                            ₹{item.price.toLocaleString()}
+                          </p>
+                        </div>
+                      </Link>
+
+                      {/* Actions */}
+                      <div className="flex items-center space-x-2">
+                        <Link
+                          href={`/product/${item.productId}`}
+                          onClick={() => setIsWishlistOpen(false)}
+                          className="px-3 py-2 bg-[#C5A059] text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#B38E46] transition shadow-sm"
+                        >
+                          Shop
+                        </Link>
+                        <button
+                          onClick={() => removeItem(item.productId)}
+                          className="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all cursor-pointer"
+                          aria-label="Remove"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

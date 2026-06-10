@@ -137,4 +137,11 @@ export const homepageCategories = sqliteTable("homepage_categories", {
   createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
 });
 
+export const wishlists = sqliteTable("wishlists", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  productId: integer("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
+});
+
 

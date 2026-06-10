@@ -90,7 +90,8 @@ export default function Login() {
       if (data.isNewUser) {
         setStep("profile");
       } else {
-        router.push("/");
+        const redirect = typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("redirect") || "/") : "/";
+        router.push(redirect);
         router.refresh();
       }
     } catch (err: any) {
@@ -120,7 +121,8 @@ export default function Login() {
         throw new Error(data.error || "Failed to save profile");
       }
       
-      router.push("/");
+      const redirect = typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("redirect") || "/") : "/";
+      router.push(redirect);
       router.refresh();
     } catch (err: any) {
       console.error("Profile error:", err);

@@ -1,4 +1,9 @@
+"use client";
+
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
+import { useWishlistStore } from '@/store/useWishlistStore';
+import { usePathname } from 'next/navigation';
 
 interface Product {
   id: string;
@@ -25,6 +30,30 @@ export default function ProductCard({ product }: { product: Product }) {
     ? Math.round(((originalPrice - activePrice) / originalPrice) * 100)
     : 0;
 
+  const pathname = usePathname();
+  const hasItem = useWishlistStore((state) => state.hasItem);
+  const addItem = useWishlistStore((state) => state.addItem);
+  const removeItem = useWishlistStore((state) => state.removeItem);
+  const isAuthenticated = useWishlistStore((state) => state.isAuthenticated);
+
+  const isWishlisted = hasItem(Number(product.id));
+
+  const handleWishlistClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+      return;
+    }
+
+    if (isWishlisted) {
+      await removeItem(Number(product.id));
+    } else {
+      await addItem(Number(product.id));
+    }
+  };
+
   return (
     <Link 
       href={`/product/${product.id}`} 
@@ -46,9 +75,19 @@ export default function ProductCard({ product }: { product: Product }) {
       
       {/* Bottom Content Section */}
       <div className="pt-3 pb-3 px-3 flex flex-col flex-1">
-        <h3 className="text-xs md:text-sm font-black tracking-widest text-[#1B3022] uppercase mb-0.5 line-clamp-1">
-          {product.name}
-        </h3>
+        <div className="flex items-center justify-between gap-2 mb-0.5 w-full">
+          <h3 className="text-xs md:text-sm font-black tracking-widest text-[#1B3022] uppercase line-clamp-1 flex-grow">
+            {product.name}
+          </h3>
+          <button
+            type="button"
+            onClick={handleWishlistClick}
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-full hover:bg-black/5 transition-all duration-300 flex-shrink-0 cursor-pointer"
+            aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+          >
+            <Heart size={14} className={isWishlisted ? "fill-red-500 text-red-500" : "text-[#1B3022]/60"} />
+          </button>
+        </div>
         <p className="text-[10px] md:text-xs text-[#1B3022]/60 font-inter line-clamp-1 mb-1.5">
           {product.description || "Designer piece"}
         </p>

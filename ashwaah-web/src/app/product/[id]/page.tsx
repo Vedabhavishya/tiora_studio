@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Sparkles, ArrowLeft, ShoppingBag, Check, X } from "lucide-react";
+import { Sparkles, ArrowLeft, ShoppingBag, Check, X, Heart } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { usePathname } from "next/navigation";
 import RefineDrawer from "@/components/RefineDrawer";
 
 interface Variation {
@@ -44,6 +46,27 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const addItem = useCartStore((state) => state.addItem);
+
+  const pathname = usePathname();
+  const hasItem = useWishlistStore((state) => state.hasItem);
+  const addItemToWishlist = useWishlistStore((state) => state.addItem);
+  const removeItemFromWishlist = useWishlistStore((state) => state.removeItem);
+  const isAuthenticated = useWishlistStore((state) => state.isAuthenticated);
+
+  const isWishlisted = hasItem(Number(id));
+
+  const handleWishlistClick = async () => {
+    if (!isAuthenticated) {
+      window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+      return;
+    }
+
+    if (isWishlisted) {
+      await removeItemFromWishlist(Number(id));
+    } else {
+      await addItemToWishlist(Number(id));
+    }
+  };
 
   useEffect(() => {
     async function fetchProduct() {
@@ -383,12 +406,12 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </div>
             )}
 
-            {/* Add to Cart */}
-            <div className="mt-auto pt-6 border-t border-brand/5">
+            {/* Add to Cart & Wishlist */}
+            <div className="mt-auto pt-6 border-t border-brand/5 flex items-center gap-4 w-full">
               <button
                 disabled={!!(selectedColor && selectedSize && currentStock === 0)}
                 onClick={handleAddToCart}
-                className={`w-full flex items-center justify-center space-x-3 font-bold py-4 rounded-2xl transition-all text-base shadow-xl ${selectedColor && selectedSize && currentStock === 0
+                className={`flex-grow flex items-center justify-center space-x-3 font-bold py-4 rounded-2xl transition-all text-base shadow-xl ${selectedColor && selectedSize && currentStock === 0
                     ? "bg-brand/10 text-brand/30 cursor-not-allowed"
                     : "bg-brand text-white hover:bg-brand-hover active:scale-[0.98] border border-transparent hover:border-brand-accent"
                   }`}
@@ -402,7 +425,19 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   {selectedColor && selectedSize && currentStock === 0 ? "Out of Stock" : added ? "Added to Bag!" : "Add to Bag"}
                 </span>
               </button>
-
+              
+              <button
+                type="button"
+                onClick={handleWishlistClick}
+                className={`flex-shrink-0 w-14 h-14 rounded-2xl border-2 flex items-center justify-center shadow-lg transition-all cursor-pointer ${
+                  isWishlisted 
+                    ? "border-red-500 bg-red-50 text-red-500 hover:bg-red-100" 
+                    : "border-brand/10 bg-white text-brand hover:border-brand-accent/50 hover:bg-brand/5"
+                }`}
+                title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <Heart className={`w-6 h-6 ${isWishlisted ? "fill-red-500 text-red-500" : "text-brand"}`} />
+              </button>
             </div>
           </div>
         </div>
