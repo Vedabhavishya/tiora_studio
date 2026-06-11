@@ -656,7 +656,6 @@ export default function CartPage() {
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-black tracking-widest text-[#FF4E20] uppercase">ASHWAAH COLLECTION</span>
                   <h4 className="text-sm font-bold text-brand mt-0.5 leading-snug line-clamp-2 uppercase">{item.name}</h4>
                   <div className="flex items-center space-x-2 mt-2">
                     <span className="text-sm font-bold text-brand">₹{item.price.toLocaleString()}</span>
@@ -676,7 +675,7 @@ export default function CartPage() {
                         onClick={() => setTempSize(sz)}
                         className={`px-5 py-2.5 rounded-full text-xs font-bold border transition-all ${
                           isSelected 
-                            ? "border-[#FF4E20] text-[#FF4E20] bg-[#FF4E20]/5 shadow-sm scale-105" 
+                            ? "border-brand text-brand bg-brand/5 shadow-sm scale-105" 
                             : "border-brand/10 text-brand/60 hover:border-brand/30 hover:text-brand bg-white"
                         }`}
                       >
@@ -685,12 +684,6 @@ export default function CartPage() {
                     );
                   })}
                 </div>
-              </div>
-
-              <div className="mb-6">
-                <p className="text-[10px] font-bold text-brand/40 uppercase tracking-widest">
-                  Seller: <span className="text-brand font-black">ASHWAAH BOUTIQUE</span>
-                </p>
               </div>
 
               {/* Done Button */}
@@ -702,7 +695,7 @@ export default function CartPage() {
                   updateItemVariant(item.id, tempSize, price);
                   setActiveSizeItemId(null);
                 }}
-                className="w-full bg-[#FF4E20] hover:bg-[#E0451B] text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-[#FF4E20]/10"
+                className="w-full bg-brand hover:bg-brand-hover text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-brand/10"
               >
                 DONE
               </button>
@@ -756,7 +749,7 @@ export default function CartPage() {
                       onClick={() => setTempQty(qty)}
                       className={`w-11 h-11 rounded-full text-xs font-bold border flex items-center justify-center transition-all ${
                         isSelected 
-                          ? "border-[#FF4E20] text-[#FF4E20] bg-[#FF4E20]/5 shadow-sm scale-110" 
+                          ? "border-brand text-brand bg-brand/5 shadow-sm scale-110" 
                           : isOutOfStock
                             ? "border-brand/5 text-brand/10 cursor-not-allowed bg-brand/[0.02]"
                             : "border-brand/10 text-brand/60 hover:border-brand/30 hover:text-brand bg-white"
@@ -775,7 +768,7 @@ export default function CartPage() {
                   setQuantity(item.id, tempQty);
                   setActiveQtyItemId(null);
                 }}
-                className="w-full bg-[#FF4E20] hover:bg-[#E0451B] text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-[#FF4E20]/10"
+                className="w-full bg-brand hover:bg-brand-hover text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-brand/10"
               >
                 DONE
               </button>
