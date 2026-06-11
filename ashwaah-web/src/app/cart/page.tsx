@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Loader2, CreditCard, ShieldCheck, CheckCircle2, Scissors, Sparkles, MapPin, AlertTriangle, ChevronDown } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Loader2, CreditCard, ShieldCheck, CheckCircle2, Scissors, Sparkles, MapPin, AlertTriangle, ChevronDown, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
@@ -28,6 +28,22 @@ export default function CartPage() {
   });
   const [orderId, setOrderId] = useState<number | null>(null);
   const router = useRouter();
+
+  // Size/Qty Popups
+  const [activeSizeItemId, setActiveSizeItemId] = useState<string | null>(null);
+  const [activeQtyItemId, setActiveQtyItemId] = useState<string | null>(null);
+  const [tempSize, setTempSize] = useState<string>("");
+  const [tempQty, setTempQty] = useState<number>(1);
+
+  const openSizeModal = (item: any) => {
+    setActiveSizeItemId(item.id);
+    setTempSize(item.size);
+  };
+
+  const openQtyModal = (item: any) => {
+    setActiveQtyItemId(item.id);
+    setTempQty(item.quantity);
+  };
 
   // Handle hydration to avoid mismatch with SSR
   useEffect(() => {
@@ -239,28 +255,17 @@ export default function CartPage() {
                 </div>
 
                 <div className="mt-auto pt-6 flex flex-col sm:flex-row items-center justify-between border-t border-brand/5">
-                  {/* Size & Quantity Dropdowns */}
+                  {/* Size & Quantity Buttons */}
                   <div className="flex flex-wrap gap-3 items-center">
                     {!isBespoke && availableSizes.length > 0 && (
-                      <div className="relative">
-                        <select
-                          value={item.size}
-                          onChange={(e) => {
-                            const newSize = e.target.value;
-                            const variation = activeVariations.find((v: any) => v.size === newSize);
-                            const price = variation ? (variation.salePrice || variation.mrp || item.price) : item.price;
-                            updateItemVariant(item.id, newSize, price);
-                          }}
-                          className="appearance-none bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold py-2.5 pl-4 pr-9 rounded-xl cursor-pointer transition-colors outline-none border border-brand/10"
-                        >
-                          {availableSizes.map((sz) => (
-                            <option key={sz} value={sz} className="text-brand bg-[#FFFDF6]">
-                              Size: {sz}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand/50 pointer-events-none" />
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openSizeModal(item)}
+                        className="bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer transition-colors outline-none border border-brand/10 flex items-center space-x-1"
+                      >
+                        <span>Size: {item.size}</span>
+                        <ChevronDown size={14} className="text-brand/50" />
+                      </button>
                     )}
 
                     {isBespoke && (
@@ -269,22 +274,14 @@ export default function CartPage() {
                       </span>
                     )}
 
-                    <div className="relative">
-                      <select
-                        value={item.quantity}
-                        onChange={(e) => {
-                          setQuantity(item.id, Number(e.target.value));
-                        }}
-                        className="appearance-none bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold py-2.5 pl-4 pr-9 rounded-xl cursor-pointer transition-colors outline-none border border-brand/10"
-                      >
-                        {Array.from({ length: stockLimit }, (_, i) => i + 1).map((qty) => (
-                          <option key={qty} value={qty} className="text-brand bg-[#FFFDF6]">
-                            Qty: {qty}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand/50 pointer-events-none" />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openQtyModal(item)}
+                      className="bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer transition-colors outline-none border border-brand/10 flex items-center space-x-1"
+                    >
+                      <span>Qty: {item.quantity}</span>
+                      <ChevronDown size={14} className="text-brand/50" />
+                    </button>
                   </div>
 
                   {/* Remove Button */}
@@ -625,6 +622,167 @@ export default function CartPage() {
           </div>
         </div>
       )}
+
+      {/* Size Edit Modal */}
+      {activeSizeItemId !== null && (() => {
+        const item = items.find(i => i.id === activeSizeItemId);
+        if (!item) return null;
+        
+        const productVariationsList = productDetailsMap[item.productId]?.variations || [];
+        const itemColor = (item.color || "").toLowerCase();
+        const colorMatchedVariations = productVariationsList.filter(
+          (v: any) => !v.color || v.color.toLowerCase() === itemColor
+        );
+        const activeVariations = colorMatchedVariations.length > 0 ? colorMatchedVariations : productVariationsList;
+        const availableSizes = activeVariations.length > 0 
+          ? Array.from(new Set(activeVariations.map((v: any) => v.size))) 
+          : [item.size];
+          
+        return (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="absolute inset-0" onClick={() => setActiveSizeItemId(null)} />
+            <div className="relative bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-brand/5 animate-in zoom-in-95 duration-200 flex flex-col">
+              {/* Close Button */}
+              <button 
+                onClick={() => setActiveSizeItemId(null)} 
+                className="absolute top-4 right-4 p-1.5 text-brand/40 hover:text-brand hover:bg-brand/5 rounded-full transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Product Info Block */}
+              <div className="flex space-x-4 mb-6">
+                <div className="w-20 h-20 bg-brand/5 rounded-xl overflow-hidden flex-shrink-0 border border-brand/5">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-black tracking-widest text-[#FF4E20] uppercase">ASHWAAH COLLECTION</span>
+                  <h4 className="text-sm font-bold text-brand mt-0.5 leading-snug line-clamp-2 uppercase">{item.name}</h4>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <span className="text-sm font-bold text-brand">₹{item.price.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-brand/5 pt-4 mb-6">
+                <h4 className="text-xs font-black text-brand uppercase tracking-wider mb-4">Select Size</h4>
+                <div className="flex flex-wrap gap-2.5">
+                  {availableSizes.map((sz) => {
+                    const isSelected = tempSize === sz;
+                    return (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setTempSize(sz)}
+                        className={`px-5 py-2.5 rounded-full text-xs font-bold border transition-all ${
+                          isSelected 
+                            ? "border-[#FF4E20] text-[#FF4E20] bg-[#FF4E20]/5 shadow-sm scale-105" 
+                            : "border-brand/10 text-brand/60 hover:border-brand/30 hover:text-brand bg-white"
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-[10px] font-bold text-brand/40 uppercase tracking-widest">
+                  Seller: <span className="text-brand font-black">ASHWAAH BOUTIQUE</span>
+                </p>
+              </div>
+
+              {/* Done Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  const variation = activeVariations.find((v: any) => v.size === tempSize);
+                  const price = variation ? (variation.salePrice || variation.mrp || item.price) : item.price;
+                  updateItemVariant(item.id, tempSize, price);
+                  setActiveSizeItemId(null);
+                }}
+                className="w-full bg-[#FF4E20] hover:bg-[#E0451B] text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-[#FF4E20]/10"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Quantity Edit Modal */}
+      {activeQtyItemId !== null && (() => {
+        const item = items.find(i => i.id === activeQtyItemId);
+        if (!item) return null;
+
+        const productVariationsList = productDetailsMap[item.productId]?.variations || [];
+        const itemColor = (item.color || "").toLowerCase();
+        const colorMatchedVariations = productVariationsList.filter(
+          (v: any) => !v.color || v.color.toLowerCase() === itemColor
+        );
+        const activeVariations = colorMatchedVariations.length > 0 ? colorMatchedVariations : productVariationsList;
+        const currentVariation = activeVariations.find(
+          (v: any) => v.size.toLowerCase() === item.size.toLowerCase()
+        );
+        const maxStock = currentVariation ? currentVariation.stock : 10;
+        const stockLimit = Math.max(item.quantity, maxStock, 1);
+        const displayLimit = Math.max(10, stockLimit); // Always show at least 10, or more if stock is higher
+
+        return (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="absolute inset-0" onClick={() => setActiveQtyItemId(null)} />
+            <div className="relative bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl border border-brand/5 animate-in zoom-in-95 duration-200 flex flex-col">
+              {/* Close Button */}
+              <button 
+                onClick={() => setActiveQtyItemId(null)} 
+                className="absolute top-6 right-6 p-1 text-brand/40 hover:text-brand hover:bg-brand/5 rounded-full transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              <h3 className="text-base font-bold text-brand mb-6">Select Quantity</h3>
+
+              <div className="grid grid-cols-5 gap-3.5 mb-8">
+                {Array.from({ length: displayLimit }, (_, i) => i + 1).map((qty) => {
+                  const isSelected = tempQty === qty;
+                  const isOutOfStock = qty > stockLimit;
+                  
+                  return (
+                    <button
+                      key={qty}
+                      type="button"
+                      disabled={isOutOfStock}
+                      onClick={() => setTempQty(qty)}
+                      className={`w-11 h-11 rounded-full text-xs font-bold border flex items-center justify-center transition-all ${
+                        isSelected 
+                          ? "border-[#FF4E20] text-[#FF4E20] bg-[#FF4E20]/5 shadow-sm scale-110" 
+                          : isOutOfStock
+                            ? "border-brand/5 text-brand/10 cursor-not-allowed bg-brand/[0.02]"
+                            : "border-brand/10 text-brand/60 hover:border-brand/30 hover:text-brand bg-white"
+                      }`}
+                    >
+                      {qty}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Done Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setQuantity(item.id, tempQty);
+                  setActiveQtyItemId(null);
+                }}
+                className="w-full bg-[#FF4E20] hover:bg-[#E0451B] text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-[#FF4E20]/10"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
