@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { products } from "@/db/schema";
-import { like, or } from "drizzle-orm";
+import { products, productVariations } from "@/db/schema";
+import { like, or, inArray } from "drizzle-orm";
 
 export async function GET(request: Request) {
   try {
@@ -21,9 +21,34 @@ export async function GET(request: Request) {
         like(products.gender, searchQuery),
         like(products.tags, searchQuery)
       )
-    ).limit(20);
+    ).limit(50); // Increased limit slightly to ensure a rich list of results for filtering
 
-    return NextResponse.json({ success: true, data: results });
+    const productIds = results.map((r) => r.id);
+    let variations: any[] = [];
+    if (productIds.length > 0) {
+      variations = await db.select()
+        .from(productVariations)
+        .where(inArray(productVariations.productId, productIds));
+    }
+
+    // Group sizes by product ID
+    const sizeMap = new Map<number, string[]>();
+    variations.forEach((v) => {
+      if (!v.productId || !v.size) return;
+      const currentSizes = sizeMap.get(v.productId) || [];
+      const normalizedSize = v.size.trim();
+      if (normalizedSize && !currentSizes.includes(normalizedSize)) {
+        currentSizes.push(normalizedSize);
+      }
+      sizeMap.set(v.productId, currentSizes);
+    });
+
+    const enrichedResults = results.map((p) => ({
+      ...p,
+      sizes: sizeMap.get(p.id) || [],
+    }));
+
+    return NextResponse.json({ success: true, data: enrichedResults });
   } catch (error) {
     console.error("Search API Error:", error);
     return NextResponse.json(
