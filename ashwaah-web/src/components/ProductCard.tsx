@@ -83,7 +83,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={handleWishlistClick}
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-full hover:bg-black/5 transition-all duration-300 flex-shrink-0 cursor-pointer"
+            className="opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 p-1 rounded-full hover:bg-black/5 transition-all duration-300 flex-shrink-0 cursor-pointer"
             aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
           >
             <Heart size={14} className={isWishlisted ? "fill-red-500 text-red-500" : "text-[#1B3022]/60"} />
