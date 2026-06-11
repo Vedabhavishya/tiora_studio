@@ -352,57 +352,6 @@ function SearchResults() {
           )}
         </div>
 
-        {/* Price Range Slider */}
-        <div className="mb-6 pb-6 border-b border-[#064e3b]/5">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#064e3b]/40 ml-1">Price Range</h3>
-            <span className="text-xs font-bold text-[#064e3b]/80">
-              ₹{priceRange[0].toLocaleString("en-IN")} - ₹{priceRange[1].toLocaleString("en-IN")}{priceRange[1] >= maxLimit ? "+" : ""}
-            </span>
-          </div>
-          
-          <div className="range-slider-container relative w-full h-5 flex items-center px-1">
-            {/* Track background */}
-            <div className="absolute left-1 right-1 h-1 bg-[#064e3b]/10 rounded-full pointer-events-none" />
-            {/* Highlight track */}
-            <div
-              className="absolute h-1 bg-[#FF4E20] rounded-full pointer-events-none"
-              style={{
-                left: `${((priceRange[0] - minLimit) / (maxLimit - minLimit || 1)) * 100}%`,
-                right: `${100 - ((priceRange[1] - minLimit) / (maxLimit - minLimit || 1)) * 100}%`
-              }}
-            />
-            <input
-              type="range"
-              min={minLimit}
-              max={maxLimit}
-              value={priceRange[0]}
-              onMouseDown={() => setActiveThumb("min")}
-              onTouchStart={() => setActiveThumb("min")}
-              onChange={(e) => {
-                const val = Math.min(Number(e.target.value), priceRange[1]);
-                setPriceRange([val, priceRange[1]]);
-              }}
-              style={{ zIndex: activeThumb === "min" ? 25 : 20 }}
-              className="absolute left-0 w-full top-0 h-5 appearance-none bg-transparent cursor-pointer pointer-events-none"
-            />
-            <input
-              type="range"
-              min={minLimit}
-              max={maxLimit}
-              value={priceRange[1]}
-              onMouseDown={() => setActiveThumb("max")}
-              onTouchStart={() => setActiveThumb("max")}
-              onChange={(e) => {
-                const val = Math.max(Number(e.target.value), priceRange[0]);
-                setPriceRange([priceRange[0], val]);
-              }}
-              style={{ zIndex: activeThumb === "max" ? 25 : 20 }}
-              className="absolute left-0 w-full top-0 h-5 appearance-none bg-transparent cursor-pointer pointer-events-none"
-            />
-          </div>
-        </div>
-
         {/* Section 1: Suitable For / Gender (Single-select, hidden if all results are home decor) */}
         {!allResultsAreHomeDecor && (
           <div className="mb-6">
@@ -501,6 +450,57 @@ function SearchResults() {
             </div>
           </div>
         )}
+
+        {/* Price Range Slider */}
+        <div className="mb-6 pb-6 border-b border-[#064e3b]/5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#064e3b]/40 ml-1">Price Range</h3>
+            <span className="text-xs font-bold text-[#064e3b]/80">
+              ₹{priceRange[0].toLocaleString("en-IN")} - ₹{priceRange[1].toLocaleString("en-IN")}{priceRange[1] >= maxLimit ? "+" : ""}
+            </span>
+          </div>
+          
+          <div className="range-slider-container relative w-full h-5 flex items-center px-1">
+            {/* Track background */}
+            <div className="absolute left-1 right-1 h-1 bg-[#064e3b]/10 rounded-full pointer-events-none" />
+            {/* Highlight track */}
+            <div
+              className="absolute h-1 bg-[#FF4E20] rounded-full pointer-events-none"
+              style={{
+                left: `${((priceRange[0] - minLimit) / (maxLimit - minLimit || 1)) * 100}%`,
+                right: `${100 - ((priceRange[1] - minLimit) / (maxLimit - minLimit || 1)) * 100}%`
+              }}
+            />
+            <input
+              type="range"
+              min={minLimit}
+              max={maxLimit}
+              value={priceRange[0]}
+              onMouseDown={() => setActiveThumb("min")}
+              onTouchStart={() => setActiveThumb("min")}
+              onChange={(e) => {
+                const val = Math.min(Number(e.target.value), priceRange[1]);
+                setPriceRange([val, priceRange[1]]);
+              }}
+              style={{ zIndex: activeThumb === "min" ? 25 : 20 }}
+              className="absolute left-0 w-full top-0 h-5 appearance-none bg-transparent cursor-pointer pointer-events-none"
+            />
+            <input
+              type="range"
+              min={minLimit}
+              max={maxLimit}
+              value={priceRange[1]}
+              onMouseDown={() => setActiveThumb("max")}
+              onTouchStart={() => setActiveThumb("max")}
+              onChange={(e) => {
+                const val = Math.max(Number(e.target.value), priceRange[0]);
+                setPriceRange([priceRange[0], val]);
+              }}
+              style={{ zIndex: activeThumb === "max" ? 25 : 20 }}
+              className="absolute left-0 w-full top-0 h-5 appearance-none bg-transparent cursor-pointer pointer-events-none"
+            />
+          </div>
+        </div>
 
         {/* Section 4: Sort By */}
         <div className="mb-6">
