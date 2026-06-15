@@ -22,7 +22,7 @@ export async function GET(request: Request) {
       const product = await db.select().from(products).where(eq(products.id, parseInt(id))).limit(1);
       if (!product.length) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
       
-      const variations = await db.select().from(productVariations).where(eq(productVariations.productId, parseInt(id)));
+      const variations = await db.select().from(productVariations).where(eq(productVariations.productId, parseInt(id))).orderBy(productVariations.id);
       // Map mrp to basePrice for the frontend
       const mappedVariations = variations.map(v => ({
         ...v,

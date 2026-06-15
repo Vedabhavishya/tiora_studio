@@ -129,6 +129,29 @@ export default function ProductManagement() {
     standard: []
   });
   const [customSizeInput, setCustomSizeInput] = useState("");
+  const [draggedSizeIndex, setDraggedSizeIndex] = useState<number | null>(null);
+
+  const handleDragStart = (index: number) => {
+    setDraggedSizeIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedSizeIndex === null || draggedSizeIndex === index) return;
+    
+    setSelectedSizes(prev => {
+      const nextList = [...prev];
+      const draggedItem = nextList[draggedSizeIndex];
+      nextList.splice(draggedSizeIndex, 1);
+      nextList.splice(index, 0, draggedItem);
+      setDraggedSizeIndex(index);
+      return nextList;
+    });
+  };
+
+  const handleDragEnd = () => {
+    setDraggedSizeIndex(null);
+  };
 
   const handleAddCustomSize = () => {
     const cleanSize = customSizeInput.trim();
@@ -215,12 +238,27 @@ export default function ProductManagement() {
         });
       });
       // Filter out variations where the size or color is no longer selected
-      return newVariations.filter(v => 
+      const filtered = newVariations.filter(v => 
         (sizesToUse.includes(v.size) || (v.size === "Default" && selectedSizes.length === 0)) &&
         (colorsToUse.includes(v.color) || (v.color === "Default" && selectedColors.length === 0))
       );
+
+      // Sort variations to match the order of selectedSizes and selectedColors
+      filtered.sort((a, b) => {
+        const sizeIndexA = sizesToUse.indexOf(a.size);
+        const sizeIndexB = sizesToUse.indexOf(b.size);
+        if (sizeIndexA !== sizeIndexB) {
+          return sizeIndexA - sizeIndexB;
+        }
+        
+        const colorIndexA = colorsToUse.indexOf(a.color);
+        const colorIndexB = colorsToUse.indexOf(b.color);
+        return colorIndexA - colorIndexB;
+      });
+
+      return filtered;
     });
-  }, [selectedSizes.length, selectedColors.length]);
+  }, [selectedSizes, selectedColors, editingId]);
 
 
   const totalStock = useMemo(() => variations.reduce((a, v) => a + (Number(v.stock) || 0), 0), [variations]);
@@ -874,6 +912,41 @@ export default function ProductManagement() {
                     <Plus size={12} className="text-[#C5A059]" />
                   </button>
                 </div>
+
+                {/* Draggable Reorder Section */}
+                {selectedSizes.length > 1 && (
+                  <div className="bg-[#1B3022]/5 p-4 rounded-2xl border border-[#1B3022]/10 space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10px] font-black text-brand/60 uppercase tracking-widest">
+                        Drag sizes to arrange display order:
+                      </label>
+                      <span className="text-[9px] font-bold text-brand/40 uppercase tracking-widest">
+                        Grab & Drag Left/Right
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      {selectedSizes.map((size, idx) => (
+                        <div
+                          key={size}
+                          draggable
+                          onDragStart={() => handleDragStart(idx)}
+                          onDragOver={(e) => handleDragOver(e, idx)}
+                          onDragEnd={handleDragEnd}
+                          className={`px-4 py-2.5 bg-white border border-brand/15 rounded-xl text-xs font-black text-brand shadow-sm flex items-center gap-2 cursor-grab active:cursor-grabbing transition-all select-none hover:border-brand/40 ${
+                            draggedSizeIndex === idx ? "opacity-40 scale-95 border-brand-accent" : ""
+                          }`}
+                        >
+                          <div className="flex flex-col gap-0.5 text-brand/30">
+                            <span className="w-2.5 h-0.5 bg-current rounded-full" />
+                            <span className="w-2.5 h-0.5 bg-current rounded-full" />
+                            <span className="w-2.5 h-0.5 bg-current rounded-full" />
+                          </div>
+                          <span>{size}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

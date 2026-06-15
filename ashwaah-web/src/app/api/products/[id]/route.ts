@@ -28,7 +28,8 @@ export async function GET(
     const variations = await db
       .select()
       .from(productVariations)
-      .where(eq(productVariations.productId, productId));
+      .where(eq(productVariations.productId, productId))
+      .orderBy(productVariations.id);
 
     return NextResponse.json({
       ...productRows[0],
