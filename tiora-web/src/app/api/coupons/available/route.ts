@@ -33,11 +33,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Filter out first-order coupons if user has previous orders
-    if (hasPreviousOrders) {
-      activeCoupons = activeCoupons.filter(coupon => !coupon.isFirstOrderOnly);
-    }
-
     const availableCoupons = activeCoupons.map((coupon) => {
       let isApplicable = true;
       let ineligibilityReason = "";
