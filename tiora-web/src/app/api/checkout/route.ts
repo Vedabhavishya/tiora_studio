@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { orders, orderItems, users } from "@/db/schema";
+import { orders, orderItems, users, coupons } from "@/db/schema";
 import { getVerifiedPhoneFromCookie } from "@/db/auth-helper";
 import { eq } from "drizzle-orm";
 
@@ -19,6 +19,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
     const user = userRows[0];
+
+    // Validate coupon code if applied
+    if (couponCode) {
+      const couponRows = await db.select().from(coupons).where(eq(coupons.code, couponCode.toUpperCase())).limit(1);
+      if (!couponRows.length) {
+        return NextResponse.json({ success: false, error: "Invalid coupon code" }, { status: 400 });
+      }
+      const coupon = couponRows[0];
+      if (!coupon.isActive) {
+        return NextResponse.json({ success: false, error: "This coupon is no longer active" }, { status: 400 });
+      }
+      if (coupon.isFirstOrderOnly) {
+        const userOrders = await db.select().from(orders).where(eq(orders.userId, user.id));
+        if (userOrders.length > 0) {
+          return NextResponse.json({ success: false, error: "This coupon is only valid for your first order" }, { status: 400 });
+        }
+      }
+    }
 
     // Append new address to user's saved addresses
     if (shippingAddress) {

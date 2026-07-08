@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     // Fetch all active coupons
-    const activeCoupons = await db.select().from(coupons).where(eq(coupons.isActive, true));
+    let activeCoupons = await db.select().from(coupons).where(eq(coupons.isActive, true));
 
     // Fetch products in cart
     const productIds = items.map(item => item.productId);
@@ -31,6 +31,11 @@ export async function POST(req: Request) {
         const userOrders = await db.select().from(orders).where(eq(orders.userId, userRows[0].id));
         hasPreviousOrders = userOrders.length > 0;
       }
+    }
+
+    // Filter out first-order coupons if user has previous orders
+    if (hasPreviousOrders) {
+      activeCoupons = activeCoupons.filter(coupon => !coupon.isFirstOrderOnly);
     }
 
     const availableCoupons = activeCoupons.map((coupon) => {
