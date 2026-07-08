@@ -22,6 +22,8 @@ export async function GET() {
     const userOrders = await db.select({
       id: orders.id,
       totalAmount: orders.totalAmount,
+      discountAmount: orders.discountAmount,
+      couponCode: orders.couponCode,
       status: orders.status,
       shippingAddress: orders.shippingAddress,
       createdAt: orders.createdAt,

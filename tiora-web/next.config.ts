@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // turbopack: {
-  //   root: '.',
-  // },
+  distDir: '.next-dev',
+  turbopack: {
+    root: process.cwd(),
+  },
   serverExternalPackages: ['firebase-admin'],
   experimental: {
     scrollRestoration: true,

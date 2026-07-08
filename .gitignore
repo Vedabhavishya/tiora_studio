@@ -1,19 +1,19 @@
 # Dependency directories
 node_modules/
-ashwaah-web/node_modules/
+tiora-web/node_modules/
 
 # Next.js build output
 .next/
-ashwaah-web/.next/
+tiora-web/.next/
 
 # Database files
 *.db
 *.sqlite
-ashwaah-web/sqlite.db
+tiora-web/sqlite.db
 
 # Environment variables
 .env*
-ashwaah-web/.env*
+tiora-web/.env*
 
 # IDE and OS files
 .vscode/

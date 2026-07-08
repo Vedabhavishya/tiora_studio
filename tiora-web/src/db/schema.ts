@@ -95,9 +95,27 @@ export const orders = sqliteTable("orders", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: integer("user_id").references(() => users.id),
   totalAmount: real("total_amount").notNull(),
+  discountAmount: real("discount_amount").default(0),
+  couponCode: text("coupon_code"),
   status: text("status").default("pending"), // pending, processing, shipped, delivered, cancelled
   shippingAddress: text("shipping_address"),
   createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
+});
+
+export const coupons = sqliteTable("coupons", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  code: text("code").notNull().unique(),
+  description: text("description"), // newly added description
+  type: text("type").notNull(), // FLAT or PERCENTAGE
+  value: real("value").notNull(), // Amount or percentage
+  minOrderValue: real("min_order_value").default(0),
+  maxDiscount: real("max_discount"), // For percentage caps
+  isFirstOrderOnly: integer("is_first_order_only", { mode: "boolean" }).default(false),
+  applicableCategories: text("applicable_categories"), // comma-separated names
+  applicableProducts: text("applicable_products"), // comma-separated product IDs
+  isActive: integer("is_active", { mode: "boolean" }).default(true),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").$defaultFn(() => new Date().toISOString()),
 });
 
 export const orderItems = sqliteTable("order_items", {

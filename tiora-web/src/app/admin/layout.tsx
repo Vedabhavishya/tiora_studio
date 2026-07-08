@@ -17,7 +17,8 @@ import {
   AlertTriangle,
   X,
   Settings,
-  LayoutGrid
+  LayoutGrid,
+  Tag
 } from "lucide-react";
 
 const sidebarLinks = [
@@ -29,6 +30,7 @@ const sidebarLinks = [
   { name: "Products", href: "/admin/products", icon: Shirt },
   { name: "Category Settings", href: "/admin/categories", icon: LayoutGrid },
   { name: "Package Cards", href: "/admin/packages", icon: Sparkles },
+  { name: "Coupons", href: "/admin/coupons", icon: Tag },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Site Settings", href: "/admin/settings", icon: Settings },
 ];

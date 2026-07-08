@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ShoppingBag, Loader2, Package, CheckCircle2, Clock, Ruler, XCircle, AlertTriangle, Image as ImageIcon, MapPin, Check, X } from "lucide-react";
+import { ShoppingBag, Loader2, Package, CheckCircle2, Clock, Ruler, XCircle, AlertTriangle, Image as ImageIcon, MapPin, Check, X, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface OrderItem {
@@ -21,6 +21,8 @@ interface OrderItem {
 interface Order {
   id: number;
   totalAmount: number;
+  discountAmount: number;
+  couponCode: string | null;
   status: string;
   shippingAddress: string | null;
   createdAt: string;
@@ -128,8 +130,8 @@ export default function MyOrdersPage() {
                   </div>
                   <div>
                     <div className="flex items-center space-x-3 mb-0.5">
-                      <p className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest">Order ID</p>
-                      <span className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest px-2 py-0.5 bg-brand-dark/5 rounded-full border border-brand-dark/10">#TI-{order.id}</span>
+                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Order ID</p>
+                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded-full border border-white/10">#TI-{order.id}</span>
                     </div>
                     <h4 className="text-lg font-bold text-white leading-tight">Tiora Custom Fit</h4>
                   </div>
@@ -137,7 +139,7 @@ export default function MyOrdersPage() {
 
                 <div className="flex flex-wrap items-start gap-4 md:gap-8">
                   <div className="flex flex-col justify-center min-w-[100px]">
-                    <p className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest mb-2">Status</p>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Status</p>
                     <div className="flex items-center h-6">
                       <span className={`inline-flex items-center px-3 py-0 h-6 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm border ${
                         order.status === 'delivered' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 
@@ -149,15 +151,21 @@ export default function MyOrdersPage() {
                     </div>
                   </div>
                   <div className="flex flex-col justify-center min-w-[80px]">
-                    <p className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest mb-2">Date</p>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Date</p>
                     <div className="flex items-center h-6">
                       <span className="text-[10px] font-bold text-white">{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                     </div>
                   </div>
                   <div className="flex flex-col justify-center text-right min-w-[80px]">
-                    <p className="text-[10px] font-bold text-brand-dark/40 uppercase tracking-widest mb-2">Total</p>
-                    <div className="flex items-center justify-end h-6">
-                      <span className="text-lg font-black text-white tracking-tighter">₹{order.totalAmount.toLocaleString()}</span>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Total</p>
+                    <div className="flex flex-col items-end justify-center h-full space-y-1">
+                      {order.couponCode && (
+                        <span className="text-[10px] font-bold text-white/40 line-through leading-none">₹{(order.totalAmount + order.discountAmount).toLocaleString()}</span>
+                      )}
+                      <span className="text-xl font-black text-white tracking-tighter leading-none">₹{order.totalAmount.toLocaleString()}</span>
+                      {order.couponCode && (
+                        <span className="text-[9px] font-bold text-green-400 uppercase tracking-widest bg-green-400/10 px-1.5 py-0.5 rounded leading-none">Saved ₹{order.discountAmount.toLocaleString()}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -203,118 +211,102 @@ export default function MyOrdersPage() {
                 </div>
               )}
 
-              <div className="p-6 md:px-8 md:py-6 space-y-6">
-                {order.items.map((item, idx) => (
-                  <div key={item.id} className="flex flex-row gap-6 items-start pb-6 border-b border-brand/5 last:border-0 last:pb-0">
-                    <div className="w-24 h-32 bg-brand/5 rounded-2xl overflow-hidden flex-shrink-0 border border-brand/5 shadow-sm relative group/img">
-                      {item.productImage ? (
-                        <img 
-                          src={item.productImage} 
-                          alt={item.productName} 
-                          className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = ""; // Clear src to show fallback
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-brand/20">
-                          <ImageIcon size={24} />
-                        </div>
-                      )}
-                      {/* Fallback for broken images */}
-                      <div className="absolute inset-0 flex items-center justify-center text-brand/10 -z-10 bg-brand/5">
-                        <ImageIcon size={24} />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h5 className="text-base font-bold text-brand">{item.productName}</h5>
-                        
-                        {/* Inline Cancel Confirmation */}
-                        {idx === 0 && ["pending"].includes(order.status) && (
-                          <div className="flex items-center space-x-2">
-                            {confirmingCancelId === order.id ? (
-                              <div className="flex items-center space-x-2 animate-in fade-in slide-in-from-right-2 duration-300">
-                                <span className="text-[8px] font-black uppercase tracking-widest text-red-500 bg-red-50 px-2 py-1 rounded-md">Confirm?</span>
-                                <button 
-                                  disabled={isCancelling}
-                                  onClick={() => handleCancelOrder(order.id)}
-                                  className="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-sm flex items-center justify-center"
-                                  title="Confirm Cancel"
-                                >
-                                  {isCancelling ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
-                                </button>
-                                <button 
-                                  disabled={isCancelling}
-                                  onClick={() => setConfirmingCancelId(null)}
-                                  className="p-1.5 bg-brand/5 text-brand/40 rounded-lg hover:bg-brand/10 transition-all"
-                                  title="Keep Order"
-                                >
-                                  <X size={12} />
-                                </button>
-                              </div>
-                            ) : (
-                              <button 
-                                onClick={() => setConfirmingCancelId(order.id)}
-                                className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-red-100 text-red-500 hover:bg-red-50 transition-all group/cancel"
-                              >
-                                <XCircle size={14} className="group-hover/cancel:rotate-90 transition-transform duration-300" />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Cancel</span>
-                              </button>
-                            )}
+              <div className="p-6 md:px-8 md:py-8 flex flex-col lg:flex-row gap-8 lg:gap-12">
+                {/* Left Column: Items and Summary */}
+                <div className="flex-1 space-y-6">
+                  {order.items.map((item, idx) => (
+                    <div key={item.id} className="flex flex-row gap-6 items-start pb-6 border-b border-brand/5 last:border-0 last:pb-0">
+                      <div className="w-24 h-32 bg-brand/5 rounded-2xl overflow-hidden flex-shrink-0 border border-brand/5 shadow-sm relative group/img">
+                        {item.productImage ? (
+                          <img 
+                            src={item.productImage} 
+                            alt={item.productName} 
+                            className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = ""; // Clear src to show fallback
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-brand/20">
+                            <ImageIcon size={24} />
                           </div>
                         )}
-                      </div>
-
-                      <div className="flex items-center space-x-3 mb-4">
-                        <span className="text-xs font-medium text-brand/40 uppercase tracking-widest">Size: {item.size}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-brand/10"></div>
-                        <span className="text-xs font-medium text-brand/40 uppercase tracking-widest">Qty: {item.quantity}</span>
-                      </div>
-                      
-                      {item.customizations && item.customizations.measurements && Object.keys(item.customizations.measurements).length > 0 && (
-                        <div className="bg-brand/5 rounded-2xl p-4 border border-brand/5 mb-4">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <Ruler size={12} className="text-[#C5A059]" />
-                            <span className="text-[9px] font-black text-brand uppercase tracking-widest">Your Custom Fit (Inches)</span>
-                          </div>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {Object.entries(item.customizations.measurements).map(([key, val]) => (
-                              <div key={key}>
-                                <p className="text-[8px] font-bold text-brand/40 uppercase tracking-tighter mb-0.5">{key}</p>
-                                <p className="text-[10px] font-black text-brand">{val}"</p>
-                              </div>
-                            ))}
-                          </div>
+                        {/* Fallback for broken images */}
+                        <div className="absolute inset-0 flex items-center justify-center text-brand/10 -z-10 bg-brand/5">
+                          <ImageIcon size={24} />
                         </div>
-                      )}
-
-                      {/* Shipping Address Moved Here */}
-                      {idx === 0 && (
-                        <div className="mt-4">
-                          <div className="flex items-start space-x-3 px-4 py-3 rounded-2xl bg-brand/5 border border-brand/5 w-full md:w-3/4">
-                            <MapPin size={14} className="text-[#C5A059] mt-0.5 flex-shrink-0" />
-                            <div className="flex-1">
-                              <p className="text-[9px] font-black uppercase tracking-widest mb-1 text-brand/40">Delivery Address</p>
-                              <p className="text-[11px] font-bold text-brand leading-relaxed">
-                                {order.shippingAddress || "No address provided"}
-                              </p>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-start">
+                        <div className="flex justify-between items-start gap-4 w-full">
+                          <div className="flex-1">
+                            <h5 className="text-base font-bold text-brand mb-1">{item.productName}</h5>
+                            <div className="mb-2">
+                              {item.customizations?.measurements && Object.keys(item.customizations.measurements).length > 0 ? (
+                                <div className="inline-flex items-center space-x-1.5 bg-[#F9F6EE] px-2 py-0.5 rounded-md">
+                                  <span className="text-[8px] font-black text-[#C5A059] uppercase tracking-widest">Bespoke / Custom Fit</span>
+                                </div>
+                              ) : (
+                                <div className="inline-flex items-center bg-brand/5 px-2 py-0.5 rounded-md">
+                                  <span className="text-[8px] font-black text-brand/60 uppercase tracking-widest">Standard Fit</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-3 mb-1">
+                              <span className="text-xs font-medium text-brand/40 uppercase tracking-widest">Size: {item.size}</span>
+                              <div className="w-1 h-1 rounded-full bg-brand/20"></div>
+                              <span className="text-xs font-medium text-brand/40 uppercase tracking-widest">Qty: {item.quantity}</span>
                             </div>
                           </div>
+                          <div className="text-right flex-shrink-0 pt-1">
+                            <span className="text-sm font-black text-brand">₹{item.price.toLocaleString()}</span>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                      <div className="text-right self-center min-w-[80px]">
-                        <span className="text-sm font-black text-brand">₹{item.price.toLocaleString()}</span>
+
+                        {item.customizations?.measurements && Object.keys(item.customizations.measurements).length > 0 && (
+                          <div className="bg-brand/5 rounded-2xl p-4 border border-brand/5 mt-4 w-full">
+                            <div className="flex items-center gap-1.5 mb-3">
+                              <Ruler size={10} className="text-[#C5A059]" />
+                              <p className="text-[9px] font-black uppercase tracking-widest text-brand">Your Custom Fit (Inches)</p>
+                            </div>
+                            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                              {Object.entries(item.customizations.measurements).map(([key, val]) => (
+                                <div key={key}>
+                                  <p className="text-[8px] font-bold text-brand/40 uppercase tracking-tighter mb-0.5">{key}</p>
+                                  <p className="text-[10px] font-black text-brand">{val}"</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
 
-
-
+                  {/* Summary Block */}
+                  <div className="bg-[#F9F6EE] rounded-2xl border border-[#C5A059]/10 p-5 mt-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-[11px] font-bold text-brand/60">Actual Price (Subtotal)</span>
+                      <span className="text-[11px] font-black text-brand">₹{(order.totalAmount + (order.discountAmount || 0)).toLocaleString()}</span>
+                    </div>
+                    {order.couponCode && (
+                      <div className="bg-green-50/50 border border-green-100 rounded-xl px-4 py-2.5 flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-2 text-green-700">
+                          <Sparkles size={12} className="text-[#C5A059]" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-green-700">Coupon Applied:</span>
+                          <span className="text-[10px] font-black bg-green-200/50 px-2 py-0.5 rounded text-green-800">{order.couponCode}</span>
+                        </div>
+                        <span className="text-[11px] font-black text-green-600">-₹{order.discountAmount?.toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center pt-3 border-t border-[#C5A059]/10">
+                      <span className="text-[13px] font-black text-brand">Paid Total</span>
+                      <span className="text-[14px] font-black text-[#C5A059]">₹{order.totalAmount.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  
                   {/* Status Messages */}
                   {order.status === "cancelled" && (
-                    <div className="pt-6 border-t border-brand/5">
+                    <div className="pt-2">
                       <div className="flex items-center space-x-3 px-6 py-4 rounded-2xl bg-red-50 border border-red-100 text-red-600">
                         <AlertTriangle size={18} />
                         <div>
@@ -325,7 +317,74 @@ export default function MyOrdersPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Right Column: Address and Actions */}
+                <div className="w-full lg:w-[300px] flex flex-col space-y-8 shrink-0 border-t lg:border-t-0 lg:border-l border-brand/5 pt-8 lg:pt-0 lg:pl-8 lg:ml-4">
+                  {/* Shipping Address */}
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest mb-3 text-[#C5A059] flex items-center gap-1.5">
+                      <MapPin size={12} /> Delivery Address
+                    </p>
+                    <div className="bg-brand/5 p-5 rounded-2xl border border-brand/5 w-full text-left">
+                      <div className="text-[10px] font-bold text-brand leading-[1.8] space-y-2.5 w-full">
+                        {order.shippingAddress ? order.shippingAddress.split(/,\s*(?=(?:Name|Street|City|State|Pincode|Contact):)/).map((part, i) => {
+                          const trimmed = part.trim();
+                          if (!trimmed) return null;
+                          const match = trimmed.match(/^(Name|Street|City|State|Pincode|Contact):\s*(.*)$/);
+                          if (match) {
+                            return (
+                              <div key={i} className="flex sm:grid sm:grid-cols-[65px_1fr] gap-1 sm:gap-2 text-left w-full items-start flex-col sm:flex-row">
+                                <span className="text-brand/40 uppercase tracking-widest">{match[1]}</span>
+                                <span className="text-brand break-words">{match[2]}</span>
+                              </div>
+                            );
+                          }
+                          return <div key={i} className="text-left w-full break-words">{trimmed}</div>;
+                        }) : "No address provided"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Manage Order (Cancel) */}
+                  {["pending"].includes(order.status) && (
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest mb-3 text-brand/40">Manage Order</p>
+                      <div className="bg-brand/5 p-2 rounded-2xl border border-brand/5">
+                        {confirmingCancelId === order.id ? (
+                          <div className="flex items-center justify-between w-full p-2">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-red-500 bg-red-50 px-2 py-1.5 rounded-md">Confirm?</span>
+                            <div className="flex items-center space-x-2">
+                              <button 
+                                disabled={isCancelling}
+                                onClick={() => handleCancelOrder(order.id)}
+                                className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-sm"
+                              >
+                                {isCancelling ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
+                              </button>
+                              <button 
+                                disabled={isCancelling}
+                                onClick={() => setConfirmingCancelId(null)}
+                                className="p-2 bg-white text-brand/40 rounded-lg hover:bg-brand/5 transition-all shadow-sm"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button 
+                            onClick={() => setConfirmingCancelId(order.id)}
+                            className="flex items-center justify-center space-x-2 px-4 py-3.5 rounded-xl border border-red-100 bg-white text-red-500 hover:bg-red-50 transition-all group/cancel w-full shadow-sm"
+                          >
+                            <XCircle size={14} className="group-hover/cancel:rotate-90 transition-transform duration-300" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Cancel Order</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+            </div>
           ))}
         </div>
       )}

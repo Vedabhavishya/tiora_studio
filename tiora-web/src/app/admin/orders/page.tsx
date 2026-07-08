@@ -6,6 +6,7 @@ import { ShoppingBag, Clock, CheckCircle2, Truck, Loader2, User, Phone, Ruler, C
 interface OrderItem {
   id: number;
   productName: string;
+  productImage: string;
   quantity: number;
   price: number;
   size: string;
@@ -19,6 +20,8 @@ interface OrderItem {
 interface Order {
   id: number;
   totalAmount: number;
+  discountAmount: number;
+  couponCode: string | null;
   status: string;
   createdAt: string;
   customerName: string;
@@ -321,6 +324,12 @@ export default function AdminOrders() {
                   <div className="text-right">
                     <p className="text-[10px] font-black text-brand/40 uppercase tracking-widest mb-1">Amount</p>
                     <p className="text-xl font-bold text-brand">₹{order.totalAmount.toLocaleString()}</p>
+                    {order.couponCode && (
+                      <div className="flex items-center gap-1 justify-end mt-1 text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-flex border border-green-200">
+                        <Sparkles size={8} />
+                        <span className="text-[8px] font-black uppercase tracking-widest">{order.couponCode}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="p-2 rounded-full bg-brand/5 text-brand/40">
                     {expandedOrder === order.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -356,9 +365,22 @@ export default function AdminOrders() {
                           <MapPin size={14} className="text-brand-accent" /> Delivery Address
                         </h4>
                         <div className="bg-white p-5 rounded-2xl border border-brand/5">
-                          <p className="text-xs font-bold text-brand/70 leading-relaxed">
-                            {order.shippingAddress || "No address provided"}
-                          </p>
+                          <div className="text-xs font-bold text-brand/70 leading-[1.6] space-y-1.5 w-full">
+                            {order.shippingAddress ? order.shippingAddress.split(/,\s*(?=(?:Name|Street|City|State|Pincode|Contact):)/).map((part, i) => {
+                              const trimmed = part.trim();
+                              if (!trimmed) return null;
+                              const match = trimmed.match(/^(Name|Street|City|State|Pincode|Contact):\s*(.*)$/);
+                              if (match) {
+                                return (
+                                  <div key={i} className="flex sm:grid sm:grid-cols-[60px_1fr] gap-1 sm:gap-2 text-left w-full items-start flex-col sm:flex-row">
+                                    <span className="text-brand/40 uppercase tracking-tighter text-[10px]">{match[1]}</span>
+                                    <span className="text-brand break-words">{match[2]}</span>
+                                  </div>
+                                );
+                              }
+                              return <div key={i} className="text-left w-full break-words">{trimmed}</div>;
+                            }) : "No address provided"}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -371,12 +393,27 @@ export default function AdminOrders() {
                       <div className="space-y-4">
                         {order.items.map((item) => (
                           <div key={item.id} className="bg-white p-6 rounded-3xl border border-brand/5 shadow-sm">
-                            <div className="flex justify-between items-start mb-6">
-                              <div>
-                                <h5 className="text-sm font-black text-brand">{item.productName}</h5>
-                                <p className="text-[10px] text-brand/40 font-bold mt-1 uppercase tracking-widest">
-                                  {item.size} / {item.color} — Qty: {item.quantity}
-                                </p>
+                            <div className="flex justify-between items-start mb-6 gap-6">
+                              <div className="flex items-start gap-4">
+                                <div className="w-16 h-20 bg-brand/5 rounded-xl overflow-hidden flex-shrink-0 border border-brand/5">
+                                  {item.productImage && item.productImage !== "/placeholder-product.png" ? (
+                                    <img 
+                                      src={item.productImage} 
+                                      alt={item.productName} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-brand/20">
+                                      <ShoppingBag size={20} />
+                                    </div>
+                                  )}
+                                </div>
+                                <div>
+                                  <h5 className="text-sm font-black text-brand">{item.productName}</h5>
+                                  <p className="text-[10px] text-brand/40 font-bold mt-1 uppercase tracking-widest">
+                                    {item.size} / {item.color} — Qty: {item.quantity}
+                                  </p>
+                                </div>
                               </div>
                               <span className="text-sm font-bold text-brand">₹{item.price.toLocaleString()}</span>
                             </div>
@@ -406,6 +443,28 @@ export default function AdminOrders() {
                           </div>
                         ))}
                       </div>
+
+                      {/* Order Summary Breakdown */}
+                      {order.couponCode && (
+                        <div className="bg-[#F9F6EE] rounded-3xl border border-[#C5A059]/10 p-6 mt-6 shadow-sm">
+                          <div className="flex justify-between items-center mb-4">
+                            <span className="text-[11px] font-bold text-brand/60">Actual Price (Subtotal)</span>
+                            <span className="text-[11px] font-black text-brand">₹{(order.totalAmount + (order.discountAmount || 0)).toLocaleString()}</span>
+                          </div>
+                          <div className="bg-green-50/50 border border-green-100 rounded-xl px-5 py-3.5 flex justify-between items-center mb-4">
+                            <div className="flex items-center gap-2 text-green-700">
+                              <Sparkles size={14} className="text-[#C5A059]" />
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-green-700">Coupon Applied:</span>
+                              <span className="text-[11px] font-black bg-green-200/50 px-2.5 py-1 rounded text-green-800">{order.couponCode}</span>
+                            </div>
+                            <span className="text-[13px] font-black text-green-600">-₹{order.discountAmount?.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between items-center pt-4 border-t border-[#C5A059]/10">
+                            <span className="text-sm font-black text-brand">Paid Total</span>
+                            <span className="text-[15px] font-black text-[#C5A059]">₹{order.totalAmount.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

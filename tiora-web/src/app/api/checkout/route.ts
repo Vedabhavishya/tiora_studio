@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
-    const { items, totalAmount, paymentMethod, shippingAddress } = await req.json();
+    const { items, totalAmount, paymentMethod, shippingAddress, couponCode, discountAmount } = await req.json();
     const phoneNumber = await getVerifiedPhoneFromCookie("auth_session");
 
     if (!phoneNumber) {
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
     const [newOrder] = await db.insert(orders).values({
       userId: user.id,
       totalAmount: totalAmount,
+      couponCode: couponCode || null,
+      discountAmount: discountAmount ? Number(discountAmount) : 0,
       status: "pending", // Initial status after payment
       shippingAddress: shippingAddress,
       createdAt: new Date().toISOString(),
