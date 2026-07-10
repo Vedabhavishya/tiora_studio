@@ -43,7 +43,7 @@ export default function Footer() {
           setShopLinks(activeLinks);
         }
       } catch (err) {
-        console.error("Failed to fetch footer shop links", err);
+        console.warn("Failed to fetch footer shop links", err);
       }
     }
     fetchShopLinks();

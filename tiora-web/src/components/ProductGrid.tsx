@@ -51,7 +51,7 @@ export default function ProductGrid() {
           setProducts(data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch featured products", error);
+        console.warn("Failed to fetch featured products", error);
       } finally {
         setLoading(false);
       }

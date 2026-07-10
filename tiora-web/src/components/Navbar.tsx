@@ -95,7 +95,7 @@ export default function Navbar() {
           clearWishlist();
         }
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.warn("Failed to fetch data:", error);
       } finally {
         setIsLoading(false);
       }

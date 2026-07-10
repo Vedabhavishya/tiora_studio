@@ -119,7 +119,7 @@ Here are my details:
           setNavCategories(activeNavs);
         }
       } catch (err) {
-        console.error("Failed to fetch settings/offers/categories", err);
+        console.warn("Failed to fetch settings/offers/categories", err);
       }
     }
     fetchData();
