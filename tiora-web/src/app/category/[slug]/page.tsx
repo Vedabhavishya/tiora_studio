@@ -83,20 +83,17 @@ export default async function CategoryPage({ params }: PageProps) {
     );
   }
 
-  // 4. If no custom sections exist, dynamically query all products matching this category name
-  let displayProducts: any[] = [];
-  if (sectionsWithProducts.length === 0) {
-    const categorySlug = categoryName.toLowerCase().trim().replace(/\s+/g, "-");
-    displayProducts = await db.select()
-      .from(products)
-      .where(
-        or(
-          eq(products.category, categoryName),
-          eq(products.category, slug),
-          eq(products.category, categorySlug)
-        )
-      );
-  }
+  // 4. Dynamically query all products matching this category name
+  const categorySlug = categoryName.toLowerCase().trim().replace(/\s+/g, "-");
+  let displayProducts = await db.select()
+    .from(products)
+    .where(
+      or(
+        eq(products.category, categoryName),
+        eq(products.category, slug),
+        eq(products.category, categorySlug)
+      )
+    );
 
   // 5. Query sizes (variations) for all products in this category
   const allProductIds = [
