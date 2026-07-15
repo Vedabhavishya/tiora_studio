@@ -92,26 +92,32 @@ Here are my details:
   useEffect(() => {
     async function fetchData() {
       try {
-        const resBanner = await fetch("/api/admin/settings?key=homepage_banner");
-        const dataBanner = await resBanner.json();
+        const [resBanner, resOffers, resCatCards, resNav] = await Promise.all([
+          fetch("/api/admin/settings?key=homepage_banner"),
+          fetch("/api/admin/offers"),
+          fetch("/api/admin/homepage-categories"),
+          fetch("/api/admin/nav")
+        ]);
+
+        const [dataBanner, dataOffers, dataCatCards, dataNav] = await Promise.all([
+          resBanner.json(),
+          resOffers.json(),
+          resCatCards.json(),
+          resNav.json()
+        ]);
+
         if (dataBanner.success && dataBanner.data) {
           setBannerUrl(dataBanner.data.value);
         }
 
-        const resOffers = await fetch("/api/admin/offers");
-        const dataOffers = await resOffers.json();
         if (dataOffers.success) {
           setOffers(dataOffers.data);
         }
 
-        const resCatCards = await fetch("/api/admin/homepage-categories");
-        const dataCatCards = await resCatCards.json();
         if (dataCatCards.success) {
           setHomepageCatCards(dataCatCards.data);
         }
 
-        const resNav = await fetch("/api/admin/nav");
-        const dataNav = await resNav.json();
         if (dataNav.success) {
           const activeNavs = (dataNav.data || [])
             .filter((item: any) => item.isActive)

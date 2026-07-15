@@ -72,16 +72,21 @@ export default function Navbar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Nav Items
-        const navRes = await fetch("/api/admin/nav");
-        const navData = await navRes.json();
+        // Fetch Nav Items and Session in parallel
+        const [navRes, sessionRes] = await Promise.all([
+          fetch("/api/admin/nav"),
+          fetch("/api/auth/session", { cache: "no-store" })
+        ]);
+
+        const [navData, sessionData] = await Promise.all([
+          navRes.json(),
+          sessionRes.json()
+        ]);
+
         if (navData.success) {
           setNavItems(navData.data);
         }
 
-        // Fetch Session
-        const sessionRes = await fetch("/api/auth/session", { cache: "no-store" });
-        const sessionData = await sessionRes.json();
         if (sessionData.authenticated) {
           setUser(sessionData.user);
           // Fetch wishlist
